@@ -113,6 +113,24 @@
 
   .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
   .cal-head button { background: var(--card2); border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 6px 14px; cursor: pointer; }
+  .cal-filtros { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .cal-filtros .chip {
+    padding: 6px 12px; border-radius: 20px; font-size: 0.78rem; cursor: pointer;
+    border: 1px solid var(--border); background: var(--card2); color: var(--muted);
+  }
+  .cal-filtros .chip.active { background: #3a2a1a; border-color: var(--orange); color: var(--orange); font-weight: 600; }
+  .cal-filtros .chip.todos.active { background: #1e2a4a; border-color: var(--accent); color: var(--accent); }
+  .cal-cell.dim { opacity: 0.18; }
+  .filtro-count { font-size: 0.78rem; color: var(--orange); margin-top: 10px; }
+
+  .ref-row { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .ref-row:last-child { border-bottom: none; }
+  .ref-hora { width: 52px; flex-shrink: 0; color: var(--green); font-size: 0.75rem; font-weight: 700; padding-top: 2px; }
+  .ref-nome { font-weight: 600; font-size: 0.85rem; }
+  .ref-desc { font-size: 0.78rem; color: var(--muted); margin-top: 2px; line-height: 1.45; }
+  .dia-tag { display: inline-block; background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 3px 10px; font-size: 0.72rem; color: var(--muted); margin-left: 8px; }
+  .prep-item { font-size: 0.8rem; color: var(--muted); padding: 5px 0; line-height: 1.4; }
+  .prep-item b { color: var(--text); }
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
   .cal-wd { text-align: center; font-size: 0.62rem; color: var(--muted); padding: 4px 0; text-transform: uppercase; }
   .cal-cell {
@@ -151,6 +169,7 @@
 </div>
 <nav>
   <button data-tab="hoje"><span class="ico">🍽️</span>Hoje</button>
+  <button data-tab="plano"><span class="ico">📋</span>Plano</button>
   <button data-tab="mes"><span class="ico">📅</span>Mês</button>
   <button data-tab="peso"><span class="ico">📈</span>Peso</button>
   <button data-tab="dados"><span class="ico">⚙️</span>Dados</button>
@@ -171,10 +190,36 @@ const JUNK = [
 const WD = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
+const ATIVIDADE_DIA = { 1: 'Treino A 🏋️', 2: 'Corrida 5km 🏃', 3: 'Treino B 🏋️', 4: 'Descanso 😴', 5: 'Treino C 🏋️', 6: 'Descanso 😴', 0: 'Corrida 10km 🏃' };
+
+function refeicoesDoDia(date) {
+  const dow = date.getDay();
+  const pol = faseDe(date).deficit;
+  const treinoTarde = [1, 2, 3, 5].includes(dow);
+  const r = [];
+  r.push({ h: '7h30', n: 'Café da manhã', d: 'Crepioca (2 ovos + 2 col. sopa de tapioca) + 1 col. sopa de creme de ricota + café' + (dow === 0 ? ' — antes da corrida de 10km, como sempre' : '') });
+  r.push({ h: '10h', n: 'Lanche da manhã 🍎', d: '1 fruta (banana, maçã ou uva) + 1 iogurte natural ou skyr' });
+  if (dow === 0) r.push({ h: '12h30', n: 'Almoço', d: 'Livre social (se for o livre da semana — marca no app) ou regra do prato: ½ vegetais, ¼ proteína grelhada, ¼ carbo' });
+  else if (dow === 6) r.push({ h: '12h', n: 'Almoço', d: 'Regra do prato: ½ vegetais, ¼ proteína grelhada, ¼ carbo (em casa ou fora)' });
+  else r.push({ h: '12h', n: 'Almoço (PF)', d: '2 palmas de frango ou peixe grelhado + 4–5 col. sopa de arroz + 1 concha de feijão + metade do prato de salada/legumes com fio de azeite. Sem fritura, farofa e refri — bebida é água.' });
+  if (treinoTarde) {
+    r.push({ h: '16h30', n: 'Pré-treino ⚡', d: pol ? '1 banana (no polimento a aveia sai)' : '1 banana + 2 col. sopa de aveia (ou 1 pão de forma integral c/ 2 fatias de queijo). Não pula — é o que segura a energia no fim do treino.' });
+    r.push({ h: '~19h', n: 'Pós-treino', d: 'Whey 1 dose + creatina 5g' });
+  } else {
+    r.push({ h: '16h30', n: 'Lanche da tarde', d: 'Cottage ou iogurte proteico + 1 fruta (ou 2 ovos cozidos do prep). Creatina 5g mesmo sem treino!' });
+  }
+  if (dow === 0) r.push({ h: 'tarde', n: 'Meal prep 🍳', d: 'Preparar as 5 marmitas da semana — checklist no card abaixo' });
+  if (dow === 4) r.push({ h: '20h', n: 'Jantar 🍕', d: 'Quinta clássica da pizza: 3–4 fatias, sem refri açucarado — marca o 🍕 no app e segue o jogo. (Sem pizza hoje? Marmita normal.)' });
+  else r.push({ h: '20h', n: 'Jantar (marmita)', d: pol ? '2 palmas de proteína + 1 punho de carbo (polimento) + metade do pote de legumes' : '2 palmas de proteína + 1,5 punho de carbo + metade do pote de legumes' });
+  return r;
+}
+
 let state = load();
 let tab = 'hoje';
 let selDate = new Date();
 let calRef = new Date();
+let calFiltro = null;
+let planDate = new Date();
 
 function load() {
   try {
@@ -266,6 +311,7 @@ function render() {
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   const v = document.getElementById('view');
   if (tab === 'hoje') v.innerHTML = renderHoje();
+  else if (tab === 'plano') v.innerHTML = renderPlano();
   else if (tab === 'mes') v.innerHTML = renderMes();
   else if (tab === 'peso') v.innerHTML = renderPeso();
   else v.innerHTML = renderDados();
@@ -333,6 +379,44 @@ function renderHoje() {
   </div>`;
 }
 
+function renderPlano() {
+  const dow = planDate.getDay();
+  const f = faseDe(planDate);
+  const ehHoje = k(planDate) === hojeK();
+  const dtLbl = planDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const refs = refeicoesDoDia(planDate);
+  return faseBannerHtml() + `
+  <div class="card">
+    <div class="date-nav">
+      <button id="p-prev">‹</button>
+      <div class="dt">${dtLbl}<span class="sub">${ehHoje ? 'hoje · ' : ''}${ATIVIDADE_DIA[dow]}${ehHoje ? '' : ' · <span id="p-hoje" style="color:var(--accent);cursor:pointer">voltar pra hoje</span>'}</span></div>
+      <button id="p-next">›</button>
+    </div>
+    ${refs.map(r => `<div class="ref-row"><div class="ref-hora">${r.h}</div><div><div class="ref-nome">${r.n}</div><div class="ref-desc">${r.d}</div></div></div>`).join('')}
+  </div>
+
+  <div class="card">
+    <h2>📌 Regras de ouro</h2>
+    <div class="prep-item"><b>Proteína em toda refeição</b> — 160g+/dia é o único número inegociável.</div>
+    <div class="prep-item"><b>2 frutas por dia</b> — lanches de 10h e 16h30.</div>
+    <div class="prep-item"><b>${f.livres} livre(s)/semana</b> nesta fase — pizza de quinta já gasta 1. Cerveja conta como livre (máx 1x/semana).</div>
+    <div class="prep-item"><b>Água 2,5–3L/dia</b> — garrafa na mesa. Café liberado até 15h.</div>
+    <div class="prep-item"><b>2 quadradinhos de chocolate 70%</b> após o almoço não contam como livre. Sobremesa inteira conta.</div>
+    <div class="prep-item"><b>Estourou?</b> Marca no app sem culpa e o dia seguinte é normal — sem compensar.</div>
+  </div>
+
+  <div class="card">
+    <h2>🍳 Meal prep de domingo (~1h30 · 5 marmitas)</h2>
+    <div class="prep-item">1. <b>Forno (40min):</b> 2 assadeiras de legumes (brócolis, abobrinha, cenoura, cebola, batata) c/ azeite. Semana sim, semana não: assadeira de salmão/tilápia junto.</div>
+    <div class="prep-item">2. <b>Grill:</b> 1,2kg de filé de frango temperado, em lotes.</div>
+    <div class="prep-item">3. <b>Panela:</b> arroz da semana (ou as batatas do forno cobrem o carbo).</div>
+    <div class="prep-item">4. <b>Ovos:</b> cozinhar 6–8 pros lanches.</div>
+    <div class="prep-item">5. <b>Montar 5 marmitas:</b> 2 palmas proteína + 1,5 punho carbo + metade legumes. <b>2 na geladeira, 3 no freezer.</b></div>
+    <div class="prep-item">6. Frutas lavadas e visíveis na fruteira.</div>
+    <div class="prep-item" style="margin-top:6px">⚠️ <b>Acabou a marmita?</b> iFood com regra: prato grelhado + arroz + legumes. Marmitas do seu pai contam como prep.</div>
+  </div>`;
+}
+
 function corDia(dia) {
   if (!dia || (dia.segui == null && !junkCount(dia) && !dia.fruta && !dia.peso)) return '';
   if (dia.segui === false) return 'd-red';
@@ -348,14 +432,18 @@ function renderMes() {
   const off = (prim.getDay() + 6) % 7;
   let cells = WD.map(w => `<div class="cal-wd">${w}</div>`).join('');
   for (let i = 0; i < off; i++) cells += '<div class="cal-cell empty"></div>';
+  let nMatch = 0;
   for (let d = 1; d <= nDias; d++) {
     const key = k(new Date(y, m, d));
     const dia = getDia(key);
-    const ems = dia ? JUNK.filter(j => dia[j.id]).map(j => j.em).join('') : '';
-    cells += `<div class="cal-cell ${corDia(dia)} ${key === hojeK() ? 'hoje' : ''}" data-day="${key}">
+    const match = !calFiltro || !!(dia && dia[calFiltro]);
+    if (calFiltro && match) nMatch++;
+    const ems = dia ? JUNK.filter(j => dia[j.id] && (!calFiltro || j.id === calFiltro)).map(j => j.em).join('') : '';
+    cells += `<div class="cal-cell ${corDia(dia)} ${key === hojeK() ? 'hoje' : ''} ${match ? '' : 'dim'}" data-day="${key}">
       <span>${d}</span><span class="ems">${ems}</span>
     </div>`;
   }
+  const fj = calFiltro ? JUNK.find(j => j.id === calFiltro) : null;
   return faseBannerHtml() + `
   <div class="card">
     <div class="cal-head">
@@ -363,7 +451,12 @@ function renderMes() {
       <h2 style="margin:0">${MESES[m]} ${y}</h2>
       <button id="m-next">›</button>
     </div>
+    <div class="cal-filtros">
+      <button class="chip todos ${!calFiltro ? 'active' : ''}" data-filtro="">Todos</button>
+      ${JUNK.map(j => `<button class="chip ${calFiltro === j.id ? 'active' : ''}" data-filtro="${j.id}">${j.em} ${j.lbl}</button>`).join('')}
+    </div>
     <div class="cal-grid">${cells}</div>
+    ${fj ? `<div class="filtro-count">${fj.em} ${nMatch} dia(s) com ${fj.lbl.toLowerCase()} em ${MESES[m].toLowerCase()}</div>` : ''}
     <div class="legend">
       <span><span class="sw" style="background:#16352a"></span>No plano</span>
       <span><span class="sw" style="background:#3a2a1a"></span>Com livre (🍕🍺🍬)</span>
@@ -540,6 +633,16 @@ function bind() {
   };
   const dh = document.getElementById('d-hoje');
   if (dh) dh.onclick = () => { selDate = new Date(); render(); };
+  document.querySelectorAll('[data-filtro]').forEach(el => el.onclick = () => {
+    calFiltro = el.dataset.filtro || null;
+    render();
+  });
+  const pp = document.getElementById('p-prev');
+  if (pp) pp.onclick = () => { planDate.setDate(planDate.getDate() - 1); render(); };
+  const pn = document.getElementById('p-next');
+  if (pn) pn.onclick = () => { planDate.setDate(planDate.getDate() + 1); render(); };
+  const ph = document.getElementById('p-hoje');
+  if (ph) ph.onclick = () => { planDate = new Date(); render(); };
   const mp = document.getElementById('m-prev');
   if (mp) mp.onclick = () => { calRef.setMonth(calRef.getMonth() - 1); render(); };
   const mn = document.getElementById('m-next');
