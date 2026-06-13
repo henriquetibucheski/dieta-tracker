@@ -131,6 +131,23 @@
   .dia-tag { display: inline-block; background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 3px 10px; font-size: 0.72rem; color: var(--muted); margin-left: 8px; }
   .prep-item { font-size: 0.8rem; color: var(--muted); padding: 5px 0; line-height: 1.4; }
   .prep-item b { color: var(--text); }
+
+  .ref-swipe-hint { font-size: 0.64rem; color: var(--muted); font-weight: 400; }
+  .carrossel {
+    display: flex; gap: 8px; overflow-x: auto; margin-top: 4px;
+    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .carrossel::-webkit-scrollbar { display: none; }
+  .opt {
+    flex: 0 0 100%; scroll-snap-align: start; box-sizing: border-box;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 9px 11px;
+  }
+  .opt-tag { font-size: 0.66rem; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+  .opt-desc { font-size: 0.8rem; color: var(--text); line-height: 1.45; }
+  .dots { display: flex; gap: 5px; justify-content: center; margin-top: 7px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); cursor: pointer; transition: background .2s, width .2s; }
+  .dot.on { background: var(--green); width: 16px; border-radius: 3px; }
+  .ref-nota { font-size: 0.74rem; color: var(--muted); margin-top: 7px; font-style: italic; }
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
   .cal-wd { text-align: center; font-size: 0.62rem; color: var(--muted); padding: 4px 0; text-transform: uppercase; }
   .cal-cell {
@@ -192,21 +209,45 @@ const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Ag
 
 const ATIVIDADE_DIA = { 1: 'Treino A 🏋️', 2: 'Corrida 5km 🏃', 3: 'Treino B 🏋️', 4: 'Descanso 😴', 5: 'Treino C 🏋️', 6: 'Descanso 😴', 0: 'Corrida 10km 🏃' };
 
+// Opções de lanche — deslize lateral no app
+const LANCHE_MANHA = [
+  { t: 'Clássico', d: '1 fruta (banana, maçã ou uva) + 1 iogurte natural ou skyr' },
+  { t: 'Proteico', d: '1 pote de skyr + 1 punhado de castanhas (~20g)' },
+  { t: 'Salgado', d: '2 ovos cozidos do prep + 1 fruta' },
+  { t: 'Queijo', d: '2 fatias de queijo branco + 1 fruta' },
+  { t: 'Na correria', d: '1 iogurte de garrafinha + 1 banana' },
+];
+const PRE_TREINO = [
+  { t: 'Clássico', d: '1 banana + 2 col. sopa de aveia' },
+  { t: 'Pão', d: '1 pão de forma integral c/ 2 fatias de queijo' },
+  { t: 'Tapioca', d: '1 tapioca pequena com queijo' },
+  { t: 'Doce natural', d: '1 banana amassada c/ fio de mel e canela' },
+  { t: 'Prático', d: '1 punhado de uva-passa + 1 banana' },
+];
+const LANCHE_TARDE = [
+  { t: 'Clássico', d: 'Cottage ou iogurte proteico + 1 fruta' },
+  { t: 'Ovos', d: '2 ovos cozidos do prep + 1 fruta' },
+  { t: 'Whey', d: '1 dose de whey batido na água + 1 fruta' },
+  { t: 'Queijo', d: '2 fatias de queijo + castanhas + 1 fruta' },
+  { t: 'Despensa', d: '1 lata de atum com tomate (emergência)' },
+];
+
 function refeicoesDoDia(date) {
   const dow = date.getDay();
   const pol = faseDe(date).deficit;
   const treinoTarde = [1, 2, 3, 5].includes(dow);
   const r = [];
   r.push({ h: '7h30', n: 'Café da manhã', d: 'Crepioca (2 ovos + 2 col. sopa de tapioca) + 1 col. sopa de creme de ricota + café' + (dow === 0 ? ' — antes da corrida de 10km, como sempre' : '') });
-  r.push({ h: '10h', n: 'Lanche da manhã 🍎', d: '1 fruta (banana, maçã ou uva) + 1 iogurte natural ou skyr' });
+  r.push({ h: '10h', n: 'Lanche da manhã 🍎', opts: LANCHE_MANHA });
   if (dow === 0) r.push({ h: '12h30', n: 'Almoço', d: 'Livre social (se for o livre da semana — marca no app) ou regra do prato: ½ vegetais, ¼ proteína grelhada, ¼ carbo' });
   else if (dow === 6) r.push({ h: '12h', n: 'Almoço', d: 'Regra do prato: ½ vegetais, ¼ proteína grelhada, ¼ carbo (em casa ou fora)' });
   else r.push({ h: '12h', n: 'Almoço (PF)', d: '2 palmas de frango ou peixe grelhado + 4–5 col. sopa de arroz + 1 concha de feijão + metade do prato de salada/legumes com fio de azeite. Sem fritura, farofa e refri — bebida é água.' });
   if (treinoTarde) {
-    r.push({ h: '16h30', n: 'Pré-treino ⚡', d: pol ? '1 banana (no polimento a aveia sai)' : '1 banana + 2 col. sopa de aveia (ou 1 pão de forma integral c/ 2 fatias de queijo). Não pula — é o que segura a energia no fim do treino.' });
+    if (pol) r.push({ h: '16h30', n: 'Pré-treino ⚡', d: '1 banana (no polimento a aveia sai — mantém leve)', nota: 'Não pula — é o que segura a energia no fim do treino.' });
+    else r.push({ h: '16h30', n: 'Pré-treino ⚡', opts: PRE_TREINO, nota: 'Não pula — é o que segura a energia no fim do treino.' });
     r.push({ h: '~19h', n: 'Pós-treino', d: 'Whey 1 dose + creatina 5g' });
   } else {
-    r.push({ h: '16h30', n: 'Lanche da tarde', d: 'Cottage ou iogurte proteico + 1 fruta (ou 2 ovos cozidos do prep). Creatina 5g mesmo sem treino!' });
+    r.push({ h: '16h30', n: 'Lanche da tarde', opts: LANCHE_TARDE, nota: 'Creatina 5g mesmo sem treino!' });
   }
   if (dow === 0) r.push({ h: 'tarde', n: 'Meal prep 🍳', d: 'Preparar as 5 marmitas da semana — checklist no card abaixo' });
   if (dow === 4) r.push({ h: '20h', n: 'Jantar 🍕', d: 'Quinta clássica da pizza: 3–4 fatias, sem refri açucarado — marca o 🍕 no app e segue o jogo. (Sem pizza hoje? Marmita normal.)' });
@@ -392,7 +433,17 @@ function renderPlano() {
       <div class="dt">${dtLbl}<span class="sub">${ehHoje ? 'hoje · ' : ''}${ATIVIDADE_DIA[dow]}${ehHoje ? '' : ' · <span id="p-hoje" style="color:var(--accent);cursor:pointer">voltar pra hoje</span>'}</span></div>
       <button id="p-next">›</button>
     </div>
-    ${refs.map(r => `<div class="ref-row"><div class="ref-hora">${r.h}</div><div><div class="ref-nome">${r.n}</div><div class="ref-desc">${r.d}</div></div></div>`).join('')}
+    ${refs.map((r, i) => `<div class="ref-row">
+      <div class="ref-hora">${r.h}</div>
+      <div style="flex:1; min-width:0">
+        <div class="ref-nome">${r.n}${r.opts ? ` <span class="ref-swipe-hint">· ${r.opts.length} opções, deslize ↔</span>` : ''}</div>
+        ${r.opts
+          ? `<div class="carrossel" data-car="${i}">${r.opts.map(o => `<div class="opt"><div class="opt-tag">${o.t}</div><div class="opt-desc">${o.d}</div></div>`).join('')}</div>
+             <div class="dots" data-dots="${i}">${r.opts.map((o, j) => `<span class="dot ${j === 0 ? 'on' : ''}" data-go="${j}"></span>`).join('')}</div>`
+          : `<div class="ref-desc">${r.d}</div>`}
+        ${r.nota ? `<div class="ref-nota">${r.nota}</div>` : ''}
+      </div>
+    </div>`).join('')}
   </div>
 
   <div class="card">
@@ -643,6 +694,15 @@ function bind() {
   if (pn) pn.onclick = () => { planDate.setDate(planDate.getDate() + 1); render(); };
   const ph = document.getElementById('p-hoje');
   if (ph) ph.onclick = () => { planDate = new Date(); render(); };
+  document.querySelectorAll('.carrossel').forEach(car => {
+    const dots = document.querySelector(`[data-dots="${car.dataset.car}"]`);
+    if (!dots) return;
+    const marca = idx => dots.querySelectorAll('.dot').forEach((d, j) => d.classList.toggle('on', j === idx));
+    car.addEventListener('scroll', () => marca(Math.round(car.scrollLeft / car.clientWidth)), { passive: true });
+    dots.querySelectorAll('.dot').forEach(d => d.onclick = () => {
+      car.scrollTo({ left: (+d.dataset.go) * car.clientWidth, behavior: 'smooth' });
+    });
+  });
   const mp = document.getElementById('m-prev');
   if (mp) mp.onclick = () => { calRef.setMonth(calRef.getMonth() - 1); render(); };
   const mn = document.getElementById('m-next');
