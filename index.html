@@ -148,6 +148,20 @@
   .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); cursor: pointer; transition: background .2s, width .2s; }
   .dot.on { background: var(--green); width: 16px; border-radius: 3px; }
   .ref-nota { font-size: 0.74rem; color: var(--muted); margin-top: 7px; font-style: italic; }
+
+  .ref-resumo { font-size: 0.76rem; color: var(--muted); margin-bottom: 10px; text-align: center; }
+  .ref-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; cursor: pointer; }
+  .ref-status { flex-shrink: 0; font-size: 0.85rem; letter-spacing: 1px; white-space: nowrap; }
+  .ref-chev { color: var(--muted); font-size: 0.9rem; margin-left: 4px; }
+  .ref-row.ref-pulei { opacity: 0.55; }
+  .ref-marks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .ref-mark {
+    font-size: 0.74rem; padding: 7px 10px; border-radius: 9px; cursor: pointer; user-select: none;
+    border: 1px solid var(--border); background: var(--bg); color: var(--muted);
+  }
+  .ref-mark.on-green { background: #16352a; border-color: var(--green); color: var(--green); }
+  .ref-mark.on-red { background: #3a1f24; border-color: var(--red); color: var(--red); }
+  .ref-mark.on-orange { background: #3a2a1a; border-color: var(--orange); color: var(--orange); }
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
   .cal-wd { text-align: center; font-size: 0.62rem; color: var(--muted); padding: 4px 0; text-transform: uppercase; }
   .cal-cell {
@@ -203,6 +217,15 @@ const JUNK = [
   { id: 'pizza',  em: '🍕', lbl: 'Pizza / fast-food' },
   { id: 'alcool', em: '🍺', lbl: 'Álcool' },
   { id: 'doce',   em: '🍬', lbl: 'Doce / besteira' },
+];
+// Marcadores por refeição (aba Plano). ok/pulei são exclusivos; o resto é livre.
+const REF_MARKS = [
+  { id: 'ok',     em: '✅',  lbl: 'Fiz certinho', cor: 'green' },
+  { id: 'pulei',  em: '⏭️', lbl: 'Pulei',        cor: 'red' },
+  { id: 'fruta',  em: '🍎',  lbl: 'Fruta',        cor: 'green' },
+  { id: 'pizza',  em: '🍕',  lbl: 'Pizza',        cor: 'orange' },
+  { id: 'alcool', em: '🍺',  lbl: 'Álcool',       cor: 'orange' },
+  { id: 'doce',   em: '🍬',  lbl: 'Doce',         cor: 'orange' },
 ];
 const WD = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
@@ -261,6 +284,10 @@ let selDate = new Date();
 let calRef = new Date();
 let calFiltro = null;
 let planDate = new Date();
+let refAberta = null;
+
+// slug estável por refeição dentro do dia (nome é único no dia)
+function refSlug(nome) { return nome.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
 
 function load() {
   try {
@@ -282,6 +309,37 @@ function setDia(key, patch) {
 }
 function hojeK() { return k(new Date()); }
 
+// flag do dia = marca no dia (aba Hoje) OU em qualquer refeição (aba Plano)
+function diaFlag(dia, flag) {
+  if (!dia) return false;
+  if (dia[flag]) return true;
+  if (dia.refs) for (const m of Object.values(dia.refs)) if (m[flag]) return true;
+  return false;
+}
+// "segui o plano": marca explícita no dia vence; senão deriva das refeições
+function diaSegui(dia) {
+  if (!dia) return null;
+  if (dia.segui != null) return dia.segui;
+  const refs = dia.refs ? Object.values(dia.refs) : [];
+  if (!refs.length) return null;
+  if (refs.some(m => m.pulei)) return false;
+  if (refs.some(m => m.ok)) return true;
+  return null;
+}
+function setDiaRef(key, slug, mark) {
+  const dia = Object.assign({}, state.dias[key] || {});
+  const refs = Object.assign({}, dia.refs || {});
+  const cur = Object.assign({}, refs[slug] || {});
+  if (mark === 'ok') { cur.ok = !cur.ok; if (cur.ok) cur.pulei = false; }
+  else if (mark === 'pulei') { cur.pulei = !cur.pulei; if (cur.pulei) cur.ok = false; }
+  else cur[mark] = !cur[mark];
+  Object.keys(cur).forEach(kk => { if (!cur[kk]) delete cur[kk]; });
+  if (Object.keys(cur).length) refs[slug] = cur; else delete refs[slug];
+  if (Object.keys(refs).length) dia.refs = refs; else delete dia.refs;
+  state.dias[key] = dia;
+  save();
+}
+
 function faseDe(d) {
   const key = k(d);
   for (const f of FASES) if (key >= f.ini && key <= f.fim) return f;
@@ -294,7 +352,7 @@ function weekStart(d) {
 }
 function junkCount(dia) {
   if (!dia) return 0;
-  return JUNK.reduce((n, j) => n + (dia[j.id] ? 1 : 0), 0);
+  return JUNK.reduce((n, j) => n + (diaFlag(dia, j.id) ? 1 : 0), 0);
 }
 function semanaStats(refDate) {
   const ini = weekStart(refDate);
@@ -302,7 +360,7 @@ function semanaStats(refDate) {
   for (let i = 0; i < 7; i++) {
     const d = new Date(ini); d.setDate(ini.getDate() + i);
     const dia = getDia(k(d));
-    if (dia) { livres += junkCount(dia); if (dia.fruta) frutas++; }
+    if (dia) { livres += junkCount(dia); if (diaFlag(dia, 'fruta')) frutas++; }
   }
   return { livres, frutas };
 }
@@ -310,10 +368,10 @@ function streakDias() {
   let n = 0;
   const d = new Date();
   const hoje = getDia(k(d));
-  if (!hoje || hoje.segui !== true) d.setDate(d.getDate() - 1);
+  if (diaSegui(hoje) !== true) d.setDate(d.getDate() - 1);
   while (true) {
     const dia = getDia(k(d));
-    if (dia && dia.segui === true) { n++; d.setDate(d.getDate() - 1); }
+    if (diaSegui(dia) === true) { n++; d.setDate(d.getDate() - 1); }
     else break;
   }
   return n;
@@ -395,17 +453,17 @@ function renderHoje() {
     </div>
 
     <div class="toggle-row">
-      <div class="toggle ${dia.segui === true ? 'on-green' : ''}" data-segui="true"><span class="em">✅</span>Segui o plano</div>
-      <div class="toggle ${dia.segui === false ? 'on-red' : ''}" data-segui="false"><span class="em">😅</span>Furei</div>
+      <div class="toggle ${diaSegui(dia) === true ? 'on-green' : ''}" data-segui="true"><span class="em">✅</span>Segui o plano</div>
+      <div class="toggle ${diaSegui(dia) === false ? 'on-red' : ''}" data-segui="false"><span class="em">😅</span>Furei</div>
     </div>
-    <div class="hint">Refeição livre planejada (pizza de quinta etc.) conta como seguir o plano — marca ✅ e o item abaixo.</div>
+    <div class="hint">Marca o dia inteiro aqui, ou refeição por refeição na aba <b>Plano</b> 📋 (as marcas aparecem nos dois lugares).</div>
 
     <div class="toggle-row">
-      ${JUNK.map(j => `<div class="toggle ${dia[j.id] ? 'on-orange' : ''}" data-junk="${j.id}"><span class="em">${j.em}</span>${j.lbl}</div>`).join('')}
+      ${JUNK.map(j => `<div class="toggle ${diaFlag(dia, j.id) ? 'on-orange' : ''}" data-junk="${j.id}"><span class="em">${j.em}</span>${j.lbl}</div>`).join('')}
     </div>
 
     <div class="toggle-row">
-      <div class="toggle ${dia.fruta ? 'on-green' : ''}" data-fruta="1" style="flex:1"><span class="em">🍎</span>Comi fruta</div>
+      <div class="toggle ${diaFlag(dia, 'fruta') ? 'on-green' : ''}" data-fruta="1" style="flex:1"><span class="em">🍎</span>Comi fruta</div>
     </div>
   </div>
 
@@ -424,8 +482,13 @@ function renderPlano() {
   const dow = planDate.getDay();
   const f = faseDe(planDate);
   const ehHoje = k(planDate) === hojeK();
+  const key = k(planDate);
+  const dia = getDia(key) || {};
   const dtLbl = planDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
   const refs = refeicoesDoDia(planDate);
+  const marcadas = refs.filter(r => (dia.refs || {})[refSlug(r.n)]).length;
+  const okCount = refs.filter(r => ((dia.refs || {})[refSlug(r.n)] || {}).ok).length;
+  const puleiCount = refs.filter(r => ((dia.refs || {})[refSlug(r.n)] || {}).pulei).length;
   return faseBannerHtml() + `
   <div class="card">
     <div class="date-nav">
@@ -433,17 +496,28 @@ function renderPlano() {
       <div class="dt">${dtLbl}<span class="sub">${ehHoje ? 'hoje · ' : ''}${ATIVIDADE_DIA[dow]}${ehHoje ? '' : ' · <span id="p-hoje" style="color:var(--accent);cursor:pointer">voltar pra hoje</span>'}</span></div>
       <button id="p-next">›</button>
     </div>
-    ${refs.map((r, i) => `<div class="ref-row">
+    <div class="ref-resumo">${marcadas ? `✅ ${okCount} · ⏭️ ${puleiCount} de ${refs.length} refeições marcadas` : `Toque numa refeição pra marcar 👇`}</div>
+    ${refs.map((r, i) => {
+      const slug = refSlug(r.n);
+      const mk = (dia.refs || {})[slug] || {};
+      const aberta = refAberta === slug;
+      const resumo = REF_MARKS.filter(m => mk[m.id]).map(m => m.em).join('');
+      return `<div class="ref-row ${mk.pulei ? 'ref-pulei' : ''}">
       <div class="ref-hora">${r.h}</div>
       <div style="flex:1; min-width:0">
-        <div class="ref-nome">${r.n}${r.opts ? ` <span class="ref-swipe-hint">· ${r.opts.length} opções, deslize ↔</span>` : ''}</div>
+        <div class="ref-head" data-refhead="${slug}">
+          <div class="ref-nome">${r.n}${r.opts ? ` <span class="ref-swipe-hint">· ${r.opts.length} opções, deslize ↔</span>` : ''}</div>
+          <div class="ref-status">${resumo || ''}<span class="ref-chev">${aberta ? '⌃' : '⌄'}</span></div>
+        </div>
         ${r.opts
           ? `<div class="carrossel" data-car="${i}">${r.opts.map(o => `<div class="opt"><div class="opt-tag">${o.t}</div><div class="opt-desc">${o.d}</div></div>`).join('')}</div>
              <div class="dots" data-dots="${i}">${r.opts.map((o, j) => `<span class="dot ${j === 0 ? 'on' : ''}" data-go="${j}"></span>`).join('')}</div>`
           : `<div class="ref-desc">${r.d}</div>`}
         ${r.nota ? `<div class="ref-nota">${r.nota}</div>` : ''}
+        ${aberta ? `<div class="ref-marks">${REF_MARKS.map(m => `<div class="ref-mark ${mk[m.id] ? 'on-' + m.cor : ''}" data-refmark="${m.id}" data-refslug="${slug}">${m.em} ${m.lbl}</div>`).join('')}</div>` : ''}
       </div>
-    </div>`).join('')}
+    </div>`;
+    }).join('')}
   </div>
 
   <div class="card">
@@ -469,10 +543,11 @@ function renderPlano() {
 }
 
 function corDia(dia) {
-  if (!dia || (dia.segui == null && !junkCount(dia) && !dia.fruta && !dia.peso)) return '';
-  if (dia.segui === false) return 'd-red';
+  const seg = diaSegui(dia);
+  if (!dia || (seg == null && !junkCount(dia) && !diaFlag(dia, 'fruta') && !dia.peso)) return '';
+  if (seg === false) return 'd-red';
   if (junkCount(dia) > 0) return 'd-orange';
-  if (dia.segui === true) return 'd-green';
+  if (seg === true) return 'd-green';
   return '';
 }
 
@@ -487,9 +562,9 @@ function renderMes() {
   for (let d = 1; d <= nDias; d++) {
     const key = k(new Date(y, m, d));
     const dia = getDia(key);
-    const match = !calFiltro || !!(dia && dia[calFiltro]);
+    const match = !calFiltro || !!(dia && diaFlag(dia, calFiltro));
     if (calFiltro && match) nMatch++;
-    const ems = dia ? JUNK.filter(j => dia[j.id] && (!calFiltro || j.id === calFiltro)).map(j => j.em).join('') : '';
+    const ems = dia ? JUNK.filter(j => diaFlag(dia, j.id) && (!calFiltro || j.id === calFiltro)).map(j => j.em).join('') : '';
     cells += `<div class="cal-cell ${corDia(dia)} ${key === hojeK() ? 'hoje' : ''} ${match ? '' : 'dim'}" data-day="${key}">
       <span>${d}</span><span class="ems">${ems}</span>
     </div>`;
@@ -536,8 +611,8 @@ function renderPeso() {
 
 function renderDados() {
   const entradas = Object.entries(state.dias);
-  const total = entradas.filter(([, v]) => v.segui != null || junkCount(v) || v.fruta || v.peso).length;
-  const seguiu = entradas.filter(([, v]) => v.segui === true).length;
+  const total = entradas.filter(([, v]) => diaSegui(v) != null || junkCount(v) || diaFlag(v, 'fruta') || v.peso).length;
+  const seguiu = entradas.filter(([, v]) => diaSegui(v) === true).length;
   const livres = entradas.reduce((s, [, v]) => s + junkCount(v), 0);
   const pesos = pesosOrdenados();
   return faseBannerHtml() + `
@@ -694,6 +769,15 @@ function bind() {
   if (pn) pn.onclick = () => { planDate.setDate(planDate.getDate() + 1); render(); };
   const ph = document.getElementById('p-hoje');
   if (ph) ph.onclick = () => { planDate = new Date(); render(); };
+  document.querySelectorAll('[data-refhead]').forEach(el => el.onclick = () => {
+    refAberta = refAberta === el.dataset.refhead ? null : el.dataset.refhead;
+    render();
+  });
+  document.querySelectorAll('[data-refmark]').forEach(el => el.onclick = (e) => {
+    e.stopPropagation();
+    setDiaRef(k(planDate), el.dataset.refslug, el.dataset.refmark);
+    render();
+  });
   document.querySelectorAll('.carrossel').forEach(car => {
     const dots = document.querySelector(`[data-dots="${car.dataset.car}"]`);
     if (!dots) return;
