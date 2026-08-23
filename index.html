@@ -152,19 +152,20 @@
   .cal-cell {
     aspect-ratio: 1; border-radius: 9px; background: var(--card2);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    font-size: 0.78rem; cursor: pointer; border: 1px solid transparent;
+    font-size: 0.78rem; cursor: pointer; border: 2px solid transparent; color: var(--text);
   }
   .cal-cell.empty { background: transparent; cursor: default; }
-  .cal-cell.hoje { border-color: var(--accent); }
-  .cal-cell.d-green { background: #16352a; color: var(--green); }
-  .cal-cell.d-orange { background: #3a2a1a; color: var(--orange); }
-  .cal-cell.d-red { background: #3a1f24; color: var(--red); }
+  .cal-cell.hoje { box-shadow: 0 0 0 2px var(--accent); }
+  .cal-cell.s-certo { border-color: var(--green); }
+  .cal-cell.s-livre { border-color: var(--orange); }
+  .cal-cell.s-atencao { border-color: var(--red); }
   .cal-cell.dim { opacity: 0.18; }
   .cal-cell .ems { font-size: 0.55rem; line-height: 1; margin-top: 2px; min-height: 8px; }
   .cal-cell .val { font-size: 0.5rem; line-height: 1; margin-top: 2px; color: var(--text); opacity: .85; }
   .filtro-count { font-size: 0.78rem; color: var(--orange); margin-top: 10px; }
   .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; font-size: 0.7rem; color: var(--muted); }
   .legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+  .legend .sw.brd { background: var(--card2); border: 2px solid var(--border); }
 
   /* ---- plano (guia macro) ---- */
   .prep-item { font-size: 0.82rem; color: var(--muted); padding: 5px 0; line-height: 1.5; }
@@ -187,9 +188,6 @@
   .bloco-metas { text-align: right; font-size: 0.74rem; white-space: nowrap; }
   .bloco-metas .g { color: var(--muted); font-size: 0.7rem; }
   .tag-agora { font-size: 0.6rem; background: var(--accent); color: #fff; border-radius: 5px; padding: 1px 6px; vertical-align: 1px; }
-  /* faixa de periodização no calendário */
-  .cal-fases { display: flex; gap: 2px; margin-bottom: 8px; height: 20px; }
-  .cal-fase { display: flex; align-items: center; justify-content: center; border-radius: 5px; font-size: 0.6rem; color: #0f1117; font-weight: 700; overflow: hidden; white-space: nowrap; }
 
   /* ---- gráficos ---- */
   canvas { width: 100%; height: 200px; display: block; }
@@ -614,9 +612,11 @@ function renderDia() {
       <div class="bal"><div class="n">${fmtN(a.exer)}</div><div class="l">exercício</div></div>
     </div>
     <div class="saldo-box ${a.kcalOK ? 'bom' : 'fora'}">
-      <div class="v">${fmtN(a.kcal)} kcal ${a.kcalOK ? '✅' : '⚠️'}</div>
-      <div class="d">meta do bloco <b style="color:${COR_TIPO[a.bloco.tipo]}">${a.bloco.nome}</b>: ${fmtN(a.kcalMin)}–${fmtN(a.kcalMax)} kcal
-      · saldo do dia ${a.saldo >= 0 ? '+' : ''}${fmtN(a.saldo)}</div>
+      <div class="v" style="color:${a.saldo < 0 ? 'var(--accent)' : 'var(--orange)'}">${a.saldo >= 0 ? '+' : '−'}${fmtN(Math.abs(a.saldo))} kcal</div>
+      <div class="d">saldo do dia (${a.saldo < 0 ? 'déficit' : 'superávit'})</div>
+      <div class="d" style="margin-top:6px; padding-top:6px; border-top:1px solid var(--border)">
+        comeu <b style="color:var(--text)">${fmtN(a.kcal)}</b> · meta do bloco
+        <b style="color:${COR_TIPO[a.bloco.tipo]}">${a.bloco.nome}</b>: ${fmtN(a.kcalMin)}–${fmtN(a.kcalMax)} kcal ${a.kcalOK ? '✅' : '⚠️'}</div>
     </div>
 
     <div class="macro">
@@ -771,24 +771,6 @@ function renderPlano() {
   </div>`;
 }
 
-// faixa colorida mostrando quais blocos cobrem o mês visível
-function faixaFases(y, m) {
-  const nDias = new Date(y, m + 1, 0).getDate();
-  const partes = [];
-  for (const b of BLOCOS) {
-    const ini = pk(b.ini), fim = pk(b.fim);
-    const d1 = new Date(Math.max(ini, new Date(y, m, 1)));
-    const d2 = new Date(Math.min(fim, new Date(y, m, nDias)));
-    if (d1 > d2) continue;
-    const dias = Math.round((d2 - d1) / 86400000) + 1;
-    partes.push({ b, dias });
-  }
-  if (!partes.length) return '<div class="cal-fase" style="flex:1; background:var(--card2); color:var(--muted)">fora da periodização</div>';
-  return partes.map(p =>
-    `<div class="cal-fase" style="flex:${p.dias}; background:${COR_TIPO[p.b.tipo]}" title="${p.b.nome}">${p.dias >= 5 ? p.b.nome : ''}</div>`
-  ).join('');
-}
-
 const CAL_FILTROS = [
   { id: 'fruta',     em: '🍎', lbl: 'Fruta' },
   { id: 'alcool',    em: '🍺', lbl: 'Álcool' },
@@ -804,7 +786,21 @@ function casaFiltro(a, filtro) {
   return !!a.flags[filtro];
 }
 function corStatus(s) {
-  return s === 'certo' ? 'd-green' : s === 'livre' ? 'd-orange' : s === 'atencao' ? 'd-red' : '';
+  return s === 'certo' ? 's-certo' : s === 'livre' ? 's-livre' : s === 'atencao' ? 's-atencao' : '';
+}
+function tinta(hex, alpha) {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
+}
+// blocos que aparecem no mês (pra legenda das cores)
+function blocosDoMes(y, m) {
+  const nDias = new Date(y, m + 1, 0).getDate();
+  const vistos = [];
+  for (let d = 1; d <= nDias; d++) {
+    const b = faseDe(new Date(y, m, d));
+    if (!vistos.some(x => x.nome === b.nome && x.tipo === b.tipo)) vistos.push(b);
+  }
+  return vistos;
 }
 
 function renderMes() {
@@ -823,7 +819,9 @@ function renderMes() {
     if (calFiltro && match) nMatch++;
     const ems = a ? FLAGS.filter(fl => a.flags[fl.id] && (!calFiltro || calFiltro === fl.id || mostraSaldo)).map(fl => fl.em).join('') : '';
     const val = mostraSaldo && a ? `<span class="val">${a.saldo > 0 ? '+' : ''}${Math.round(a.saldo/100)/10}k</span>` : '';
-    cells += `<div class="cal-cell ${corStatus(a && a.status)} ${key === hojeK() ? 'hoje' : ''} ${match ? '' : 'dim'}" data-day="${key}">
+    const bl = faseDe(new Date(y, m, d));
+    cells += `<div class="cal-cell ${corStatus(a && a.status)} ${key === hojeK() ? 'hoje' : ''} ${match ? '' : 'dim'}"
+      style="background:${tinta(COR_TIPO[bl.tipo], 0.30)}" data-day="${key}" title="${bl.nome}">
       <span>${d}</span>${val || `<span class="ems">${ems}</span>`}
     </div>`;
   }
@@ -839,14 +837,18 @@ function renderMes() {
       <button class="chip todos ${!calFiltro ? 'active' : ''}" data-filtro="">Todos</button>
       ${CAL_FILTROS.map(x => `<button class="chip ${calFiltro === x.id ? 'active' : ''}" data-filtro="${x.id}">${x.em} ${x.lbl}</button>`).join('')}
     </div>
-    <div class="cal-fases">${faixaFases(y, m)}</div>
     <div class="cal-grid">${cells}</div>
     ${ff ? `<div class="filtro-count">${ff.em} ${nMatch} dia(s) com ${ff.lbl.toLowerCase()} em ${MESES[m].toLowerCase()}</div>` : ''}
     <div class="legend">
-      <span><span class="sw" style="background:#16352a"></span>Dia certo</span>
-      <span><span class="sw" style="background:#3a2a1a"></span>Livre (🍺🍕)</span>
-      <span><span class="sw" style="background:#3a1f24"></span>Fora da meta</span>
-      <span><span class="sw" style="background:var(--card2)"></span>Sem dados</span>
+      <b style="color:var(--muted);font-weight:600">Fundo = bloco:</b>
+      ${blocosDoMes(y, m).map(b => `<span><span class="sw" style="background:${tinta(COR_TIPO[b.tipo], 0.75)}"></span>${b.nome}</span>`).join('')}
+    </div>
+    <div class="legend">
+      <b style="color:var(--muted);font-weight:600">Borda = o dia:</b>
+      <span><span class="sw brd" style="border-color:var(--green)"></span>Certo</span>
+      <span><span class="sw brd" style="border-color:var(--orange)"></span>Livre (🍺🍕)</span>
+      <span><span class="sw brd" style="border-color:var(--red)"></span>Fora da meta</span>
+      <span><span class="sw brd" style="border-color:var(--border)"></span>Sem dados</span>
     </div>
     <div class="hint" style="margin-top:8px">Tudo calculado pelo JSON importado. Toque num dia pra ver o detalhe.</div>
   </div>`;
