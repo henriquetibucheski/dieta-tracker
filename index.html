@@ -68,7 +68,7 @@
   }
   nav button {
     background: none; border: none; color: var(--muted);
-    font-size: 0.75rem; cursor: pointer; padding: 6px 14px;
+    font-size: 0.72rem; cursor: pointer; padding: 6px 10px;
     display: flex; flex-direction: column; align-items: center; gap: 2px;
   }
   nav button .ico { font-size: 1.2rem; }
@@ -88,18 +88,44 @@
   .date-nav .dt { font-weight: 700; font-size: 0.95rem; text-align: center; }
   .date-nav .dt .sub { display: block; font-weight: 400; font-size: 0.7rem; color: var(--muted); }
 
-  .toggle-row { display: flex; gap: 8px; margin-bottom: 10px; }
-  .toggle {
-    flex: 1; padding: 14px 6px; border-radius: 12px; text-align: center;
-    border: 1px solid var(--border); background: var(--card2);
-    color: var(--text); cursor: pointer; font-size: 0.85rem; font-weight: 600;
-    user-select: none;
-  }
-  .toggle .em { font-size: 1.3rem; display: block; margin-bottom: 4px; }
-  .toggle.on-green { background: #16352a; border-color: var(--green); color: var(--green); }
-  .toggle.on-red { background: #3a1f24; border-color: var(--red); color: var(--red); }
-  .toggle.on-orange { background: #3a2a1a; border-color: var(--orange); color: var(--orange); }
   .hint { font-size: 0.72rem; color: var(--muted); margin: 4px 0 12px; }
+
+  /* ---- balanço do dia ---- */
+  .bal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .bal { background: var(--card2); border-radius: 10px; padding: 11px 6px; text-align: center; }
+  .bal .n { font-size: 1.05rem; font-weight: 800; }
+  .bal .l { font-size: 0.62rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-top: 2px; }
+  .saldo-box { border-radius: 10px; padding: 12px; margin-top: 10px; text-align: center; border: 1px solid var(--border); }
+  .saldo-box.bom { background: #16352a; border-color: var(--green); }
+  .saldo-box.fora { background: #3a1f24; border-color: var(--red); }
+  .saldo-box .v { font-size: 1.5rem; font-weight: 800; }
+  .saldo-box .d { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+
+  .macro { margin-top: 12px; }
+  .macro-lbl { display: flex; justify-content: space-between; font-size: 0.76rem; margin-bottom: 5px; }
+  .macro-lbl .g { color: var(--muted); }
+  .bar-bg { height: 9px; border-radius: 5px; background: var(--card2); overflow: hidden; position: relative; }
+  .bar-fill { height: 100%; border-radius: 5px; }
+  .bar-meta { position: absolute; top: -3px; width: 2px; height: 15px; background: #fff; opacity: 0.75; }
+
+  .flags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .flag {
+    font-size: 0.74rem; padding: 6px 11px; border-radius: 20px;
+    border: 1px solid var(--border); background: var(--card2); color: var(--muted);
+  }
+  .flag.on-green { background: #16352a; border-color: var(--green); color: var(--green); }
+  .flag.on-orange { background: #3a2a1a; border-color: var(--orange); color: var(--orange); }
+
+  .meal { border-bottom: 1px solid var(--border); padding: 9px 0; }
+  .meal:last-child { border-bottom: none; }
+  .meal-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .meal-nome { font-weight: 600; font-size: 0.85rem; }
+  .meal-kcal { font-size: 0.75rem; color: var(--green); font-weight: 700; white-space: nowrap; }
+  .meal-macros { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
+  .item { font-size: 0.76rem; color: var(--muted); padding: 3px 0 0 10px; display: flex; justify-content: space-between; gap: 8px; }
+  .item .ik { white-space: nowrap; }
+
+  .vazio { text-align: center; padding: 22px 10px; color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
 
   .peso-row { display: flex; align-items: center; gap: 10px; }
   .peso-row input {
@@ -111,27 +137,43 @@
   .peso-row .unit { color: var(--muted); }
   .peso-row .trend { margin-left: auto; font-size: 0.78rem; color: var(--muted); text-align: right; }
 
+  /* ---- calendário ---- */
   .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
   .cal-head button { background: var(--card2); border: 1px solid var(--border); color: var(--text); border-radius: 10px; padding: 6px 14px; cursor: pointer; }
   .cal-filtros { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
   .cal-filtros .chip {
-    padding: 6px 12px; border-radius: 20px; font-size: 0.78rem; cursor: pointer;
+    padding: 6px 11px; border-radius: 20px; font-size: 0.75rem; cursor: pointer;
     border: 1px solid var(--border); background: var(--card2); color: var(--muted);
   }
   .cal-filtros .chip.active { background: #3a2a1a; border-color: var(--orange); color: var(--orange); font-weight: 600; }
   .cal-filtros .chip.todos.active { background: #1e2a4a; border-color: var(--accent); color: var(--accent); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-wd { text-align: center; font-size: 0.62rem; color: var(--muted); padding: 4px 0; text-transform: uppercase; }
+  .cal-cell {
+    aspect-ratio: 1; border-radius: 9px; background: var(--card2);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 0.78rem; cursor: pointer; border: 1px solid transparent;
+  }
+  .cal-cell.empty { background: transparent; cursor: default; }
+  .cal-cell.hoje { border-color: var(--accent); }
+  .cal-cell.d-green { background: #16352a; color: var(--green); }
+  .cal-cell.d-orange { background: #3a2a1a; color: var(--orange); }
+  .cal-cell.d-red { background: #3a1f24; color: var(--red); }
   .cal-cell.dim { opacity: 0.18; }
+  .cal-cell .ems { font-size: 0.55rem; line-height: 1; margin-top: 2px; min-height: 8px; }
+  .cal-cell .val { font-size: 0.5rem; line-height: 1; margin-top: 2px; color: var(--text); opacity: .85; }
   .filtro-count { font-size: 0.78rem; color: var(--orange); margin-top: 10px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; font-size: 0.7rem; color: var(--muted); }
+  .legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
 
+  /* ---- plano ---- */
   .ref-row { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
   .ref-row:last-child { border-bottom: none; }
   .ref-hora { width: 52px; flex-shrink: 0; color: var(--green); font-size: 0.75rem; font-weight: 700; padding-top: 2px; }
   .ref-nome { font-weight: 600; font-size: 0.85rem; }
   .ref-desc { font-size: 0.78rem; color: var(--muted); margin-top: 2px; line-height: 1.45; }
-  .dia-tag { display: inline-block; background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 3px 10px; font-size: 0.72rem; color: var(--muted); margin-left: 8px; }
   .prep-item { font-size: 0.8rem; color: var(--muted); padding: 5px 0; line-height: 1.4; }
   .prep-item b { color: var(--text); }
-
   .ref-swipe-hint { font-size: 0.64rem; color: var(--muted); font-weight: 400; }
   .carrossel {
     display: flex; gap: 8px; overflow-x: auto; margin-top: 4px;
@@ -149,48 +191,39 @@
   .dot.on { background: var(--green); width: 16px; border-radius: 3px; }
   .ref-nota { font-size: 0.74rem; color: var(--muted); margin-top: 7px; font-style: italic; }
 
-  .ref-resumo { font-size: 0.76rem; color: var(--muted); margin-bottom: 10px; text-align: center; }
-  .ref-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; cursor: pointer; }
-  .ref-status { flex-shrink: 0; font-size: 0.85rem; letter-spacing: 1px; white-space: nowrap; }
-  .ref-chev { color: var(--muted); font-size: 0.9rem; margin-left: 4px; }
-  .ref-row.ref-pulei { opacity: 0.55; }
-  .ref-marks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-  .ref-mark {
-    font-size: 0.74rem; padding: 7px 10px; border-radius: 9px; cursor: pointer; user-select: none;
-    border: 1px solid var(--border); background: var(--bg); color: var(--muted);
+  /* ---- gráficos ---- */
+  canvas { width: 100%; height: 200px; display: block; }
+  .chart-note { font-size: 0.73rem; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+  .chart-leg { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.72rem; color: var(--muted); margin-top: 8px; }
+  .chart-leg .sw { display: inline-block; width: 12px; height: 3px; border-radius: 2px; margin-right: 5px; vertical-align: 3px; }
+  .periodo { display: flex; gap: 6px; margin-bottom: 12px; }
+  .periodo button {
+    flex: 1; padding: 8px; border-radius: 10px; cursor: pointer; font-size: 0.78rem;
+    border: 1px solid var(--border); background: var(--card2); color: var(--muted);
   }
-  .ref-mark.on-green { background: #16352a; border-color: var(--green); color: var(--green); }
-  .ref-mark.on-red { background: #3a1f24; border-color: var(--red); color: var(--red); }
-  .ref-mark.on-orange { background: #3a2a1a; border-color: var(--orange); color: var(--orange); }
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-  .cal-wd { text-align: center; font-size: 0.62rem; color: var(--muted); padding: 4px 0; text-transform: uppercase; }
-  .cal-cell {
-    aspect-ratio: 1; border-radius: 9px; background: var(--card2);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    font-size: 0.78rem; cursor: pointer; border: 1px solid transparent;
-  }
-  .cal-cell.empty { background: transparent; cursor: default; }
-  .cal-cell.hoje { border-color: var(--accent); }
-  .cal-cell.d-green { background: #16352a; color: var(--green); }
-  .cal-cell.d-orange { background: #3a2a1a; color: var(--orange); }
-  .cal-cell.d-red { background: #3a1f24; color: var(--red); }
-  .cal-cell .ems { font-size: 0.55rem; line-height: 1; margin-top: 2px; min-height: 8px; }
-  .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; font-size: 0.7rem; color: var(--muted); }
-  .legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+  .periodo button.active { background: #1e2a4a; border-color: var(--accent); color: var(--accent); font-weight: 600; }
 
-  canvas { width: 100%; height: 220px; display: block; }
-  .chart-note { font-size: 0.75rem; color: var(--muted); margin-top: 8px; }
-
+  /* ---- dados ---- */
   .btn {
     background: var(--card2); border: 1px solid var(--border); color: var(--text);
     border-radius: 10px; padding: 10px 16px; cursor: pointer; font-size: 0.85rem;
     margin-right: 8px; margin-bottom: 8px;
   }
   .btn.primary { background: var(--green); border-color: var(--green); color: #0f1117; font-weight: 700; }
+  .btn.danger { border-color: #5c2a2a; color: var(--red); }
   .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .stat { background: var(--card2); border-radius: 10px; padding: 12px; text-align: center; }
   .stat .num { font-size: 1.2rem; font-weight: 800; }
   .stat .lbl { font-size: 0.68rem; color: var(--muted); }
+  textarea {
+    width: 100%; min-height: 92px; padding: 10px; border-radius: 10px; resize: vertical;
+    border: 1px solid var(--border); background: var(--bg); color: var(--text);
+    font-family: ui-monospace, Consolas, monospace; font-size: 0.75rem; margin-bottom: 10px;
+  }
+  textarea:focus { outline: none; border-color: var(--green); }
+  .msg { font-size: 0.78rem; margin-top: 8px; padding: 9px 11px; border-radius: 9px; line-height: 1.5; }
+  .msg.ok { background: #16352a; color: var(--green); }
+  .msg.err { background: #3a1f24; color: var(--red); }
 </style>
 </head>
 <body>
@@ -199,10 +232,10 @@
   <div id="view"></div>
 </div>
 <nav>
-  <button data-tab="hoje"><span class="ico">🍽️</span>Hoje</button>
+  <button data-tab="hoje"><span class="ico">🍽️</span>Dia</button>
   <button data-tab="plano"><span class="ico">📋</span>Plano</button>
   <button data-tab="mes"><span class="ico">📅</span>Mês</button>
-  <button data-tab="peso"><span class="ico">📈</span>Peso</button>
+  <button data-tab="graficos"><span class="ico">📈</span>Gráficos</button>
   <button data-tab="dados"><span class="ico">⚙️</span>Dados</button>
 </nav>
 
@@ -213,24 +246,19 @@ const FASES = [
   { nome: 'Polimento — leve déficit', ini: '2026-11-09', fim: '2026-12-20', kcal: '~2.200–2.400 kcal', prot: '170–180g proteína', livres: 1, meta: '−0,3 kg/semana', deficit: true },
   { nome: 'Pós-meta — manutenção', ini: '2026-12-21', fim: '2027-12-31', kcal: 'manutenção', prot: '160g+', livres: 2, meta: 'Manter o shape 🏖️', deficit: false },
 ];
-const JUNK = [
-  { id: 'pizza',  em: '🍕', lbl: 'Pizza / fast-food' },
-  { id: 'alcool', em: '🍺', lbl: 'Álcool' },
-  { id: 'doce',   em: '🍬', lbl: 'Doce / besteira' },
-];
-// Marcadores por refeição (aba Plano). ok/pulei são exclusivos; o resto é livre.
-const REF_MARKS = [
-  { id: 'ok',     em: '✅',  lbl: 'Fiz certinho', cor: 'green' },
-  { id: 'pulei',  em: '⏭️', lbl: 'Pulei',        cor: 'red' },
-  { id: 'fruta',  em: '🍎',  lbl: 'Fruta',        cor: 'green' },
-  { id: 'pizza',  em: '🍕',  lbl: 'Pizza',        cor: 'orange' },
-  { id: 'alcool', em: '🍺',  lbl: 'Álcool',       cor: 'orange' },
-  { id: 'doce',   em: '🍬',  lbl: 'Doce',         cor: 'orange' },
-];
 const WD = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-
 const ATIVIDADE_DIA = { 1: 'Treino A 🏋️', 2: 'Corrida 5km 🏃', 3: 'Treino B 🏋️', 4: 'Descanso 😴', 5: 'Treino C 🏋️', 6: 'Descanso 😴', 0: 'Corrida 10km 🏃' };
+
+// Detecção automática a partir dos nomes dos itens do JSON
+const KW_FRUTA = ['banana','maca','uva','laranja','mexerica','tangerina','morango','manga','abacaxi','melancia','melao','pera','kiwi','mamao','goiaba','ameixa','pessego','cereja','framboesa','mirtilo','blueberry','amora','caqui','figo','maracuja','acerola','fruta','abacate','ponkan','nectarina'];
+const KW_ALCOOL = ['cerveja','chopp','chope','vinho','whisky','uisque','vodka','gin','caipirinha','caipiroska','long neck','ipa','lager','pilsen','licor','sake','saque','espumante','prosecco','aperol','negroni','cachaca','tequila','rum','heineken','brahma','corona','budweiser','stella','skol','spaten','baden','coquetel','sidra'];
+const KW_BESTEIRA = ['pizza','hamburguer','hamburger','burger','frita','frito','nuggets','sorvete','chocolate','brigadeiro','bolo','doce','sobremesa','pudim','mousse','torta','brownie','cookie','biscoito','bolacha','salgadinho','chips','donut','rosquinha','churros','sonho','coxinha','pastel','esfiha','hot dog','cachorro quente','mcdonald','burger king','bobs','subway','china in box','habib','outback','gyoza','tempura','refrigerante','coca-cola','coca cola','guarana','pepsi','fanta','sprite','bala','pirulito','pacoca','waffle','nutella','leite condensado','sundae','milkshake','acai'];
+const FLAGS = [
+  { id: 'fruta',    em: '🍎', lbl: 'Fruta',    cor: 'green'  },
+  { id: 'alcool',   em: '🍺', lbl: 'Álcool',   cor: 'orange' },
+  { id: 'besteira', em: '🍕', lbl: 'Besteira', cor: 'orange' },
+];
 
 // Opções de lanche — deslize lateral no app
 const LANCHE_MANHA = [
@@ -262,7 +290,7 @@ function refeicoesDoDia(date) {
   const r = [];
   r.push({ h: '7h30', n: 'Café da manhã', d: 'Crepioca (2 ovos + 2 col. sopa de tapioca) + 1 col. sopa de creme de ricota + café' + (dow === 0 ? ' — antes da corrida de 10km, como sempre' : '') });
   r.push({ h: '10h', n: 'Lanche da manhã 🍎', opts: LANCHE_MANHA });
-  if (dow === 0) r.push({ h: '12h30', n: 'Almoço', d: 'Livre social (se for o livre da semana — marca no app) ou regra do prato: ½ vegetais, ¼ proteína grelhada, ¼ carbo' });
+  if (dow === 0) r.push({ h: '12h30', n: 'Almoço', d: 'Livre social (se for o livre da semana) ou regra do prato: ½ vegetais, ¼ proteína grelhada, ¼ carbo' });
   else if (dow === 6) r.push({ h: '12h', n: 'Almoço', d: 'Regra do prato: ½ vegetais, ¼ proteína grelhada, ¼ carbo (em casa ou fora)' });
   else r.push({ h: '12h', n: 'Almoço (PF)', d: '2 palmas de frango ou peixe grelhado + 4–5 col. sopa de arroz + 1 concha de feijão + metade do prato de salada/legumes com fio de azeite. Sem fritura, farofa e refri — bebida é água.' });
   if (treinoTarde) {
@@ -273,7 +301,7 @@ function refeicoesDoDia(date) {
     r.push({ h: '16h30', n: 'Lanche da tarde', opts: LANCHE_TARDE, nota: 'Creatina 5g mesmo sem treino!' });
   }
   if (dow === 0) r.push({ h: 'tarde', n: 'Meal prep 🍳', d: 'Preparar as 5 marmitas da semana — checklist no card abaixo' });
-  if (dow === 4) r.push({ h: '20h', n: 'Jantar 🍕', d: 'Quinta clássica da pizza: 3–4 fatias, sem refri açucarado — marca o 🍕 no app e segue o jogo. (Sem pizza hoje? Marmita normal.)' });
+  if (dow === 4) r.push({ h: '20h', n: 'Jantar 🍕', d: 'Quinta clássica da pizza: 3–4 fatias, sem refri açucarado — e segue o jogo. (Sem pizza hoje? Marmita normal.)' });
   else r.push({ h: '20h', n: 'Jantar (marmita)', d: pol ? '2 palmas de proteína + 1 punho de carbo (polimento) + metade do pote de legumes' : '2 palmas de proteína + 1,5 punho de carbo + metade do pote de legumes' });
   return r;
 }
@@ -284,17 +312,15 @@ let selDate = new Date();
 let calRef = new Date();
 let calFiltro = null;
 let planDate = new Date();
-let refAberta = null;
-
-// slug estável por refeição dentro do dia (nome é único no dia)
-function refSlug(nome) { return nome.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+let periodo = 30;
+let importMsg = null;
 
 function load() {
   try {
     const s = JSON.parse(localStorage.getItem(KEY));
-    if (s && s.dias) return s;
+    if (s && s.dias) return { dias: s.dias || {}, nutri: s.nutri || {} };
   } catch (e) {}
-  return { dias: {} };
+  return { dias: {}, nutri: {} };
 }
 function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
 
@@ -308,38 +334,6 @@ function setDia(key, patch) {
   save();
 }
 function hojeK() { return k(new Date()); }
-
-// flag do dia = marca no dia (aba Hoje) OU em qualquer refeição (aba Plano)
-function diaFlag(dia, flag) {
-  if (!dia) return false;
-  if (dia[flag]) return true;
-  if (dia.refs) for (const m of Object.values(dia.refs)) if (m[flag]) return true;
-  return false;
-}
-// "segui o plano": marca explícita no dia vence; senão deriva das refeições
-function diaSegui(dia) {
-  if (!dia) return null;
-  if (dia.segui != null) return dia.segui;
-  const refs = dia.refs ? Object.values(dia.refs) : [];
-  if (!refs.length) return null;
-  if (refs.some(m => m.pulei)) return false;
-  if (refs.some(m => m.ok)) return true;
-  return null;
-}
-function setDiaRef(key, slug, mark) {
-  const dia = Object.assign({}, state.dias[key] || {});
-  const refs = Object.assign({}, dia.refs || {});
-  const cur = Object.assign({}, refs[slug] || {});
-  if (mark === 'ok') { cur.ok = !cur.ok; if (cur.ok) cur.pulei = false; }
-  else if (mark === 'pulei') { cur.pulei = !cur.pulei; if (cur.pulei) cur.ok = false; }
-  else cur[mark] = !cur[mark];
-  Object.keys(cur).forEach(kk => { if (!cur[kk]) delete cur[kk]; });
-  if (Object.keys(cur).length) refs[slug] = cur; else delete refs[slug];
-  if (Object.keys(refs).length) dia.refs = refs; else delete dia.refs;
-  state.dias[key] = dia;
-  save();
-}
-
 function faseDe(d) {
   const key = k(d);
   for (const f of FASES) if (key >= f.ini && key <= f.fim) return f;
@@ -350,38 +344,111 @@ function weekStart(d) {
   x.setDate(x.getDate() - ((x.getDay() + 6) % 7));
   return x;
 }
-function junkCount(dia) {
-  if (!dia) return 0;
-  return JUNK.reduce((n, j) => n + (diaFlag(dia, j.id) ? 1 : 0), 0);
-}
-function semanaStats(refDate) {
-  const ini = weekStart(refDate);
-  let livres = 0, frutas = 0;
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(ini); d.setDate(ini.getDate() + i);
-    const dia = getDia(k(d));
-    if (dia) { livres += junkCount(dia); if (diaFlag(dia, 'fruta')) frutas++; }
-  }
-  return { livres, frutas };
-}
-function streakDias() {
-  let n = 0;
-  const d = new Date();
-  const hoje = getDia(k(d));
-  if (diaSegui(hoje) !== true) d.setDate(d.getDate() - 1);
-  while (true) {
-    const dia = getDia(k(d));
-    if (diaSegui(dia) === true) { n++; d.setDate(d.getDate() - 1); }
-    else break;
-  }
-  return n;
-}
 function diasAte(keyStr) {
   const ms = pk(keyStr) - new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
   return Math.max(0, Math.round(ms / 86400000));
 }
+function norm(s) {
+  return (s || '').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+// casa a palavra (aceitando plural) sem pegar prefixo de outra: "bolo" não casa "bolonhesa"
+const _reCache = {};
+function temPalavra(txt, kw) {
+  if (!_reCache[kw]) _reCache[kw] = new RegExp('\\b' + kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(s|es)?\\b');
+  return _reCache[kw].test(txt);
+}
+function num(a, b) { return typeof a === 'number' && isFinite(a) ? a : b; }
+function fmtN(v, dec) { return (Math.round(v * Math.pow(10, dec || 0)) / Math.pow(10, dec || 0)).toLocaleString('pt-BR'); }
 
-// ---------- pesos ----------
+// ---------- análise do JSON de nutrição ----------
+function detectaFlags(j) {
+  const f = { fruta: false, alcool: false, besteira: false };
+  for (const m of (j.refeicoes || [])) {
+    for (const it of (m.itens || [])) {
+      const nome = norm(it.item);
+      const kcal = num(it.kcal, 0);
+      if (KW_FRUTA.some(w => temPalavra(nome, w))) f.fruta = true;
+      // bebida zero/diet/light e itens sem caloria não contam como besteira/álcool
+      const zero = kcal <= 5 || /\b(zero|diet|light)\b/.test(nome);
+      if (!zero) {
+        if (KW_ALCOOL.some(w => temPalavra(nome, w))) f.alcool = true;
+        if (KW_BESTEIRA.some(w => temPalavra(nome, w))) f.besteira = true;
+      }
+    }
+  }
+  return f;
+}
+
+function alvoSaldo(date) {
+  return faseDe(date).deficit ? { min: -600, max: -100 } : { min: -300, max: 300 };
+}
+
+function analisaNutri(j, date) {
+  if (!j) return null;
+  const r = j.resumo_dia || {};
+  const soma = campo => (j.refeicoes || []).reduce((s, m) => s + num((m.total || {})[campo], 0), 0);
+  const kcal = num(r.kcal_ingeridas, soma('kcal'));
+  const prot = num(r.proteina_g, soma('proteina_g'));
+  const carb = num(r.carboidrato_g, soma('carboidrato_g'));
+  const gord = num(r.gordura_g, soma('gordura_g'));
+  const exer = num(r.kcal_gastas_exercicio, (j.exercicios || []).reduce((s, e) => s + num(e.gasto_calorico_estimado_kcal, 0), 0));
+  const tmb = num(r.kcal_gastas_tmb, num((j.usuario || {}).tmb_kcal, 0));
+  const gasto = num(r.kcal_gastas_total, tmb + exer);
+  const saldo = num(r.saldo_kcal_estimado, kcal - gasto);
+  const mp = (j.usuario || {}).meta_proteina || {};
+  const alvo = alvoSaldo(date);
+  const flags = detectaFlags(j);
+  const protOK = mp.min_g ? prot >= mp.min_g : true;
+  const saldoOK = saldo >= alvo.min && saldo <= alvo.max;
+  // fora da meta (proteina ou saldo) pesa mais que o livre planejado
+  let status;
+  if (!protOK || !saldoOK) status = 'atencao';
+  else if (flags.alcool || flags.besteira) status = 'livre';
+  else status = 'certo';
+  return {
+    kcal, prot, carb, gord, exer, tmb, gasto, saldo, alvo, flags, status, protOK, saldoOK,
+    metaMin: mp.min_g || null, metaMax: mp.max_g || null,
+    refeicoes: j.refeicoes || [], exercicios: j.exercicios || [], peso: (j.usuario || {}).peso_kg || null,
+  };
+}
+function analiseDe(key) { return analisaNutri(state.nutri[key], pk(key)); }
+function serieNutri(dias) {
+  let arr = Object.keys(state.nutri).sort().map(key => ({ key, date: pk(key), a: analiseDe(key) })).filter(x => x.a);
+  if (dias) {
+    const corte = new Date(); corte.setDate(corte.getDate() - dias + 1);
+    corte.setHours(0,0,0,0);
+    arr = arr.filter(x => x.date >= corte);
+  }
+  return arr;
+}
+
+// ---------- agregados ----------
+function semanaStats(refDate) {
+  const ini = weekStart(refDate);
+  let livres = 0, frutas = 0, comDados = 0, certos = 0;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(ini); d.setDate(ini.getDate() + i);
+    const a = analiseDe(k(d));
+    if (!a) continue;
+    comDados++;
+    if (a.flags.alcool || a.flags.besteira) livres++;
+    if (a.flags.fruta) frutas++;
+    if (a.status === 'certo') certos++;
+  }
+  return { livres, frutas, comDados, certos };
+}
+function streakDias() {
+  let n = 0;
+  const d = new Date();
+  const aHoje = analiseDe(k(d));
+  if (!aHoje || aHoje.status === 'atencao') d.setDate(d.getDate() - 1);
+  while (true) {
+    const a = analiseDe(k(d));
+    if (a && a.status !== 'atencao') { n++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  return n;
+}
 function pesosOrdenados() {
   return Object.entries(state.dias)
     .filter(([, v]) => typeof v.peso === 'number' && v.peso > 0)
@@ -405,17 +472,49 @@ function tendencia() {
   return { atual: m1, delta: m1 - m0 };
 }
 
+// ---------- import ----------
+function importarTexto(txt) {
+  let parsed;
+  try { parsed = JSON.parse(txt); }
+  catch (e) { return { erro: 'JSON inválido: ' + e.message }; }
+  return importarObj(parsed);
+}
+function importarObj(parsed) {
+  // backup do próprio app
+  if (parsed && parsed.dias && !parsed.data) {
+    if (!confirm('Isso é um backup do app. Substituir TODOS os dados atuais?')) return { cancelado: true };
+    state = { dias: parsed.dias || {}, nutri: parsed.nutri || {} };
+    save();
+    return { backup: true, dias: Object.keys(state.dias).length, nutri: Object.keys(state.nutri).length };
+  }
+  const arr = Array.isArray(parsed) ? parsed : [parsed];
+  let n = 0; const erros = [];
+  for (const j of arr) {
+    if (!j || typeof j !== 'object' || !/^\d{4}-\d{2}-\d{2}$/.test(j.data || '')) {
+      erros.push('registro sem campo "data" no formato AAAA-MM-DD');
+      continue;
+    }
+    if (!Array.isArray(j.refeicoes)) { erros.push(j.data + ': sem lista de refeições'); continue; }
+    state.nutri[j.data] = j;
+    const peso = (j.usuario || {}).peso_kg;
+    if (peso && !(state.dias[j.data] || {}).peso) setDia(j.data, { peso: peso });
+    n++;
+  }
+  save();
+  return { n, erros };
+}
+
 // ---------- render ----------
 function render() {
   document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   const v = document.getElementById('view');
-  if (tab === 'hoje') v.innerHTML = renderHoje();
+  if (tab === 'hoje') v.innerHTML = renderDia();
   else if (tab === 'plano') v.innerHTML = renderPlano();
   else if (tab === 'mes') v.innerHTML = renderMes();
-  else if (tab === 'peso') v.innerHTML = renderPeso();
+  else if (tab === 'graficos') v.innerHTML = renderGraficos();
   else v.innerHTML = renderDados();
   bind();
-  if (tab === 'peso') { drawPesoChart(); drawLivresChart(); }
+  if (tab === 'graficos') desenhaGraficos();
 }
 
 function faseBannerHtml() {
@@ -428,8 +527,9 @@ function faseBannerHtml() {
   </div>`;
 }
 
-function renderHoje() {
+function renderDia() {
   const key = k(selDate);
+  const a = analiseDe(key);
   const dia = getDia(key) || {};
   const f = faseDe(selDate);
   const st = semanaStats(selDate);
@@ -437,6 +537,63 @@ function renderHoje() {
   const dtLbl = selDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
   const trend = tendencia();
   const livreClass = st.livres > f.livres ? 'warn' : 'ok';
+
+  let corpo;
+  if (!a) {
+    corpo = `<div class="vazio">Sem dados de nutrição para este dia.<br>
+      Importe o JSON na aba <b>Dados</b> ⚙️<br>
+      <button class="btn primary" id="ir-dados" style="margin-top:12px">📥 Importar agora</button></div>`;
+  } else {
+    const pctProt = a.metaMax ? Math.min(100, 100 * a.prot / a.metaMax) : 0;
+    const posMeta = a.metaMax && a.metaMin ? 100 * a.metaMin / a.metaMax : null;
+    const kcalCarb = a.carb * 4, kcalGord = a.gord * 9, kcalProt = a.prot * 4;
+    const totalMacro = kcalCarb + kcalGord + kcalProt || 1;
+    const saldoBom = a.saldoOK;
+    corpo = `
+    <div class="bal-grid">
+      <div class="bal"><div class="n" style="color:var(--accent)">${fmtN(a.kcal)}</div><div class="l">ingeridas</div></div>
+      <div class="bal"><div class="n" style="color:var(--orange)">${fmtN(a.gasto)}</div><div class="l">gastas</div></div>
+      <div class="bal"><div class="n">${fmtN(a.exer)}</div><div class="l">exercício</div></div>
+    </div>
+    <div class="saldo-box ${saldoBom ? 'bom' : 'fora'}">
+      <div class="v">${a.saldo >= 0 ? '+' : ''}${fmtN(a.saldo)} kcal</div>
+      <div class="d">${a.saldo < 0 ? 'déficit' : 'superávit'} · alvo da fase: ${a.alvo.min} a ${a.alvo.max > 0 ? '+' + a.alvo.max : a.alvo.max} kcal ${saldoBom ? '✅' : '⚠️'}</div>
+    </div>
+
+    <div class="macro">
+      <div class="macro-lbl"><span>Proteína ${a.protOK ? '✅' : '⚠️'}</span><span class="g">${fmtN(a.prot,1)}g${a.metaMin ? ' / meta ' + a.metaMin + '–' + a.metaMax + 'g' : ''}</span></div>
+      <div class="bar-bg">
+        <div class="bar-fill" style="width:${pctProt}%; background:var(--green)"></div>
+        ${posMeta != null ? `<div class="bar-meta" style="left:${posMeta}%"></div>` : ''}
+      </div>
+    </div>
+    <div class="macro">
+      <div class="macro-lbl"><span>Carboidrato</span><span class="g">${fmtN(a.carb,1)}g · ${Math.round(100*kcalCarb/totalMacro)}% das kcal</span></div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${100*kcalCarb/totalMacro}%; background:var(--accent)"></div></div>
+    </div>
+    <div class="macro">
+      <div class="macro-lbl"><span>Gordura</span><span class="g">${fmtN(a.gord,1)}g · ${Math.round(100*kcalGord/totalMacro)}% das kcal</span></div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${100*kcalGord/totalMacro}%; background:var(--orange)"></div></div>
+    </div>
+
+    <div class="flags">
+      ${FLAGS.map(fl => `<span class="flag ${a.flags[fl.id] ? 'on-' + fl.cor : ''}">${fl.em} ${fl.lbl}${a.flags[fl.id] ? '' : ': não'}</span>`).join('')}
+    </div>
+    <div class="hint" style="margin-top:10px">Detectado automaticamente pelos itens do JSON.</div>`;
+  }
+
+  const refeicoesHtml = a ? `
+  <div class="card">
+    <h2>🍽️ O que você comeu</h2>
+    ${a.refeicoes.map(m => `<div class="meal">
+      <div class="meal-head"><span class="meal-nome">${m.nome || 'Refeição'}</span><span class="meal-kcal">${fmtN(num((m.total||{}).kcal, 0))} kcal</span></div>
+      <div class="meal-macros">P ${fmtN(num((m.total||{}).proteina_g,0),1)}g · C ${fmtN(num((m.total||{}).carboidrato_g,0),1)}g · G ${fmtN(num((m.total||{}).gordura_g,0),1)}g</div>
+      ${(m.itens || []).map(it => `<div class="item"><span>${it.item || ''}</span><span class="ik">${fmtN(num(it.kcal,0))}</span></div>`).join('')}
+    </div>`).join('')}
+    ${a.exercicios.length ? `<div class="meal"><div class="meal-head"><span class="meal-nome">🏃 Exercício</span><span class="meal-kcal">−${fmtN(a.exer)} kcal</span></div>
+      ${a.exercicios.map(e => `<div class="item"><span>${e.tipo || 'Atividade'}${e.distancia_km ? ' · ' + e.distancia_km + 'km' : ''}${e.duracao_min ? ' · ' + e.duracao_min + 'min' : ''}</span><span class="ik">${fmtN(num(e.gasto_calorico_estimado_kcal,0))}</span></div>`).join('')}
+    </div>` : ''}
+  </div>` : '';
 
   return faseBannerHtml() + `
   <div class="streak-banner">
@@ -451,24 +608,11 @@ function renderHoje() {
       <div class="dt">${dtLbl}${ehHoje ? '<span class="sub">hoje</span>' : '<span class="sub" id="d-hoje" style="color:var(--accent);cursor:pointer">voltar pra hoje</span>'}</div>
       <button id="d-next" ${ehHoje ? 'disabled style="opacity:.3"' : ''}>›</button>
     </div>
-
-    <div class="toggle-row">
-      <div class="toggle ${diaSegui(dia) === true ? 'on-green' : ''}" data-segui="true"><span class="em">✅</span>Segui o plano</div>
-      <div class="toggle ${diaSegui(dia) === false ? 'on-red' : ''}" data-segui="false"><span class="em">😅</span>Furei</div>
-    </div>
-    <div class="hint">Marca o dia inteiro aqui, ou refeição por refeição na aba <b>Plano</b> 📋 (as marcas aparecem nos dois lugares).</div>
-
-    <div class="toggle-row">
-      ${JUNK.map(j => `<div class="toggle ${diaFlag(dia, j.id) ? 'on-orange' : ''}" data-junk="${j.id}"><span class="em">${j.em}</span>${j.lbl}</div>`).join('')}
-    </div>
-
-    <div class="toggle-row">
-      <div class="toggle ${diaFlag(dia, 'fruta') ? 'on-green' : ''}" data-fruta="1" style="flex:1"><span class="em">🍎</span>Comi fruta</div>
-    </div>
+    ${corpo}
   </div>
-
+  ${refeicoesHtml}
   <div class="card">
-    <h2>⚖️ Peso de hoje</h2>
+    <h2>⚖️ Peso</h2>
     <div class="peso-row">
       <input type="number" step="0.1" min="50" max="120" id="peso-in" value="${dia.peso || ''}" placeholder="0.0">
       <span class="unit">kg</span>
@@ -482,13 +626,8 @@ function renderPlano() {
   const dow = planDate.getDay();
   const f = faseDe(planDate);
   const ehHoje = k(planDate) === hojeK();
-  const key = k(planDate);
-  const dia = getDia(key) || {};
   const dtLbl = planDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
   const refs = refeicoesDoDia(planDate);
-  const marcadas = refs.filter(r => (dia.refs || {})[refSlug(r.n)]).length;
-  const okCount = refs.filter(r => ((dia.refs || {})[refSlug(r.n)] || {}).ok).length;
-  const puleiCount = refs.filter(r => ((dia.refs || {})[refSlug(r.n)] || {}).pulei).length;
   return faseBannerHtml() + `
   <div class="card">
     <div class="date-nav">
@@ -496,28 +635,17 @@ function renderPlano() {
       <div class="dt">${dtLbl}<span class="sub">${ehHoje ? 'hoje · ' : ''}${ATIVIDADE_DIA[dow]}${ehHoje ? '' : ' · <span id="p-hoje" style="color:var(--accent);cursor:pointer">voltar pra hoje</span>'}</span></div>
       <button id="p-next">›</button>
     </div>
-    <div class="ref-resumo">${marcadas ? `✅ ${okCount} · ⏭️ ${puleiCount} de ${refs.length} refeições marcadas` : `Toque numa refeição pra marcar 👇`}</div>
-    ${refs.map((r, i) => {
-      const slug = refSlug(r.n);
-      const mk = (dia.refs || {})[slug] || {};
-      const aberta = refAberta === slug;
-      const resumo = REF_MARKS.filter(m => mk[m.id]).map(m => m.em).join('');
-      return `<div class="ref-row ${mk.pulei ? 'ref-pulei' : ''}">
+    ${refs.map((r, i) => `<div class="ref-row">
       <div class="ref-hora">${r.h}</div>
       <div style="flex:1; min-width:0">
-        <div class="ref-head" data-refhead="${slug}">
-          <div class="ref-nome">${r.n}${r.opts ? ` <span class="ref-swipe-hint">· ${r.opts.length} opções, deslize ↔</span>` : ''}</div>
-          <div class="ref-status">${resumo || ''}<span class="ref-chev">${aberta ? '⌃' : '⌄'}</span></div>
-        </div>
+        <div class="ref-nome">${r.n}${r.opts ? ` <span class="ref-swipe-hint">· ${r.opts.length} opções, deslize ↔</span>` : ''}</div>
         ${r.opts
           ? `<div class="carrossel" data-car="${i}">${r.opts.map(o => `<div class="opt"><div class="opt-tag">${o.t}</div><div class="opt-desc">${o.d}</div></div>`).join('')}</div>
              <div class="dots" data-dots="${i}">${r.opts.map((o, j) => `<span class="dot ${j === 0 ? 'on' : ''}" data-go="${j}"></span>`).join('')}</div>`
           : `<div class="ref-desc">${r.d}</div>`}
         ${r.nota ? `<div class="ref-nota">${r.nota}</div>` : ''}
-        ${aberta ? `<div class="ref-marks">${REF_MARKS.map(m => `<div class="ref-mark ${mk[m.id] ? 'on-' + m.cor : ''}" data-refmark="${m.id}" data-refslug="${slug}">${m.em} ${m.lbl}</div>`).join('')}</div>` : ''}
       </div>
-    </div>`;
-    }).join('')}
+    </div>`).join('')}
   </div>
 
   <div class="card">
@@ -527,7 +655,7 @@ function renderPlano() {
     <div class="prep-item"><b>${f.livres} livre(s)/semana</b> nesta fase — pizza de quinta já gasta 1. Cerveja conta como livre (máx 1x/semana).</div>
     <div class="prep-item"><b>Água 2,5–3L/dia</b> — garrafa na mesa. Café liberado até 15h.</div>
     <div class="prep-item"><b>2 quadradinhos de chocolate 70%</b> após o almoço não contam como livre. Sobremesa inteira conta.</div>
-    <div class="prep-item"><b>Estourou?</b> Marca no app sem culpa e o dia seguinte é normal — sem compensar.</div>
+    <div class="prep-item"><b>Estourou?</b> Registra sem culpa e o dia seguinte é normal — sem compensar.</div>
   </div>
 
   <div class="card">
@@ -542,13 +670,22 @@ function renderPlano() {
   </div>`;
 }
 
-function corDia(dia) {
-  const seg = diaSegui(dia);
-  if (!dia || (seg == null && !junkCount(dia) && !diaFlag(dia, 'fruta') && !dia.peso)) return '';
-  if (seg === false) return 'd-red';
-  if (junkCount(dia) > 0) return 'd-orange';
-  if (seg === true) return 'd-green';
-  return '';
+const CAL_FILTROS = [
+  { id: 'fruta',     em: '🍎', lbl: 'Fruta' },
+  { id: 'alcool',    em: '🍺', lbl: 'Álcool' },
+  { id: 'besteira',  em: '🍕', lbl: 'Besteira' },
+  { id: 'deficit',   em: '📉', lbl: 'Déficit' },
+  { id: 'superavit', em: '📈', lbl: 'Superávit' },
+];
+function casaFiltro(a, filtro) {
+  if (!filtro) return true;
+  if (!a) return false;
+  if (filtro === 'deficit') return a.saldo < 0;
+  if (filtro === 'superavit') return a.saldo > 0;
+  return !!a.flags[filtro];
+}
+function corStatus(s) {
+  return s === 'certo' ? 'd-green' : s === 'livre' ? 'd-orange' : s === 'atencao' ? 'd-red' : '';
 }
 
 function renderMes() {
@@ -556,20 +693,22 @@ function renderMes() {
   const prim = new Date(y, m, 1);
   const nDias = new Date(y, m + 1, 0).getDate();
   const off = (prim.getDay() + 6) % 7;
+  const mostraSaldo = calFiltro === 'deficit' || calFiltro === 'superavit';
   let cells = WD.map(w => `<div class="cal-wd">${w}</div>`).join('');
   for (let i = 0; i < off; i++) cells += '<div class="cal-cell empty"></div>';
   let nMatch = 0;
   for (let d = 1; d <= nDias; d++) {
     const key = k(new Date(y, m, d));
-    const dia = getDia(key);
-    const match = !calFiltro || !!(dia && diaFlag(dia, calFiltro));
+    const a = analiseDe(key);
+    const match = casaFiltro(a, calFiltro);
     if (calFiltro && match) nMatch++;
-    const ems = dia ? JUNK.filter(j => diaFlag(dia, j.id) && (!calFiltro || j.id === calFiltro)).map(j => j.em).join('') : '';
-    cells += `<div class="cal-cell ${corDia(dia)} ${key === hojeK() ? 'hoje' : ''} ${match ? '' : 'dim'}" data-day="${key}">
-      <span>${d}</span><span class="ems">${ems}</span>
+    const ems = a ? FLAGS.filter(fl => a.flags[fl.id] && (!calFiltro || calFiltro === fl.id || mostraSaldo)).map(fl => fl.em).join('') : '';
+    const val = mostraSaldo && a ? `<span class="val">${a.saldo > 0 ? '+' : ''}${Math.round(a.saldo/100)/10}k</span>` : '';
+    cells += `<div class="cal-cell ${corStatus(a && a.status)} ${key === hojeK() ? 'hoje' : ''} ${match ? '' : 'dim'}" data-day="${key}">
+      <span>${d}</span>${val || `<span class="ems">${ems}</span>`}
     </div>`;
   }
-  const fj = calFiltro ? JUNK.find(j => j.id === calFiltro) : null;
+  const ff = calFiltro ? CAL_FILTROS.find(x => x.id === calFiltro) : null;
   return faseBannerHtml() + `
   <div class="card">
     <div class="cal-head">
@@ -579,108 +718,265 @@ function renderMes() {
     </div>
     <div class="cal-filtros">
       <button class="chip todos ${!calFiltro ? 'active' : ''}" data-filtro="">Todos</button>
-      ${JUNK.map(j => `<button class="chip ${calFiltro === j.id ? 'active' : ''}" data-filtro="${j.id}">${j.em} ${j.lbl}</button>`).join('')}
+      ${CAL_FILTROS.map(x => `<button class="chip ${calFiltro === x.id ? 'active' : ''}" data-filtro="${x.id}">${x.em} ${x.lbl}</button>`).join('')}
     </div>
     <div class="cal-grid">${cells}</div>
-    ${fj ? `<div class="filtro-count">${fj.em} ${nMatch} dia(s) com ${fj.lbl.toLowerCase()} em ${MESES[m].toLowerCase()}</div>` : ''}
+    ${ff ? `<div class="filtro-count">${ff.em} ${nMatch} dia(s) com ${ff.lbl.toLowerCase()} em ${MESES[m].toLowerCase()}</div>` : ''}
     <div class="legend">
-      <span><span class="sw" style="background:#16352a"></span>No plano</span>
-      <span><span class="sw" style="background:#3a2a1a"></span>Com livre (🍕🍺🍬)</span>
-      <span><span class="sw" style="background:#3a1f24"></span>Furei</span>
-      <span><span class="sw" style="background:var(--card2)"></span>Sem registro</span>
+      <span><span class="sw" style="background:#16352a"></span>Dia certo</span>
+      <span><span class="sw" style="background:#3a2a1a"></span>Livre (🍺🍕)</span>
+      <span><span class="sw" style="background:#3a1f24"></span>Fora da meta</span>
+      <span><span class="sw" style="background:var(--card2)"></span>Sem dados</span>
     </div>
-    <div class="hint" style="margin-top:8px">Toca num dia pra editar.</div>
+    <div class="hint" style="margin-top:8px">Tudo calculado pelo JSON importado. Toque num dia pra ver o detalhe.</div>
   </div>`;
 }
 
-function renderPeso() {
-  const trend = tendencia();
+function renderGraficos() {
+  const s = serieNutri(periodo === 0 ? null : periodo);
   const f = faseDe(new Date());
+  const trend = tendencia();
+  const medias = s.length ? {
+    kcal: s.reduce((x, y) => x + y.a.kcal, 0) / s.length,
+    prot: s.reduce((x, y) => x + y.a.prot, 0) / s.length,
+    saldo: s.reduce((x, y) => x + y.a.saldo, 0) / s.length,
+  } : null;
   return faseBannerHtml() + `
+  <div class="periodo">
+    <button data-per="7" class="${periodo === 7 ? 'active' : ''}">7 dias</button>
+    <button data-per="30" class="${periodo === 30 ? 'active' : ''}">30 dias</button>
+    <button data-per="0" class="${periodo === 0 ? 'active' : ''}">Tudo</button>
+  </div>
+  ${medias ? `<div class="card"><h2>📊 Médias do período</h2>
+    <div class="stat-grid">
+      <div class="stat"><div class="num" style="color:var(--accent)">${fmtN(medias.kcal)}</div><div class="lbl">kcal/dia ingeridas</div></div>
+      <div class="stat"><div class="num ok">${fmtN(medias.prot,1)}g</div><div class="lbl">proteína/dia</div></div>
+      <div class="stat"><div class="num" style="color:${medias.saldo < 0 ? 'var(--accent)' : 'var(--orange)'}">${medias.saldo >= 0 ? '+' : ''}${fmtN(medias.saldo)}</div><div class="lbl">saldo médio/dia</div></div>
+      <div class="stat"><div class="num">${s.length}</div><div class="lbl">dias com dados</div></div>
+    </div></div>` : ''}
+
   <div class="card">
-    <h2>⚖️ Evolução do peso</h2>
+    <h2>🔥 Calorias: ingeridas vs gastas</h2>
+    <canvas id="ch-kcal"></canvas>
+    <div class="chart-leg"><span><span class="sw" style="background:var(--accent)"></span>Ingeridas</span><span><span class="sw" style="background:var(--orange)"></span>Gasto total (TMB + exercício)</span></div>
+  </div>
+
+  <div class="card">
+    <h2>⚖️ Saldo calórico</h2>
+    <canvas id="ch-saldo" style="height:170px"></canvas>
+    <div class="chart-note">Faixa verde = alvo da fase (${f.deficit ? '−600 a −100' : '−300 a +300'} kcal). Barra verde = dentro do alvo.</div>
+  </div>
+
+  <div class="card">
+    <h2>🥩 Proteína vs meta</h2>
+    <canvas id="ch-prot" style="height:170px"></canvas>
+    <div class="chart-note">Faixa verde = meta de proteína do dia (vem do JSON).</div>
+  </div>
+
+  <div class="card">
+    <h2>🍚 Macronutrientes (g)</h2>
+    <canvas id="ch-macros" style="height:170px"></canvas>
+    <div class="chart-leg"><span><span class="sw" style="background:var(--green)"></span>Proteína</span><span><span class="sw" style="background:var(--accent)"></span>Carboidrato</span><span><span class="sw" style="background:var(--orange)"></span>Gordura</span></div>
+  </div>
+
+  <div class="card">
+    <h2>📉 Peso</h2>
     <canvas id="ch-peso"></canvas>
     <div class="chart-note">Pontos = pesagens · linha verde = média móvel 7 dias. ${trend ? `Tendência: <b style="color:var(--text)">${trend.delta >= 0 ? '+' : ''}${trend.delta.toFixed(2)} kg/semana</b> (meta: ${f.meta.toLowerCase()})` : ''}</div>
-  </div>
-  <div class="card">
-    <h2>🍕 Livres por semana</h2>
-    <canvas id="ch-livres" style="height:180px"></canvas>
-    <div class="chart-note">Linha tracejada = orçamento da fase (${f.livres}/semana).</div>
   </div>`;
 }
 
 function renderDados() {
-  const entradas = Object.entries(state.dias);
-  const total = entradas.filter(([, v]) => diaSegui(v) != null || junkCount(v) || diaFlag(v, 'fruta') || v.peso).length;
-  const seguiu = entradas.filter(([, v]) => diaSegui(v) === true).length;
-  const livres = entradas.reduce((s, [, v]) => s + junkCount(v), 0);
+  const nutriKeys = Object.keys(state.nutri).sort();
+  const s = serieNutri(null);
+  const certos = s.filter(x => x.a.status === 'certo').length;
+  const livres = s.filter(x => x.a.status === 'livre').length;
   const pesos = pesosOrdenados();
   return faseBannerHtml() + `
   <div class="card">
+    <h2>📥 Importar nutrição</h2>
+    <div class="hint">Cole o JSON do dia (aceita 1 dia, vários dias em lista, ou um backup do app).</div>
+    <textarea id="nutri-txt" placeholder='{"data": "2026-08-23", "refeicoes": [...], "resumo_dia": {...}}'></textarea>
+    <button class="btn primary" id="btn-colar">Importar do texto</button>
+    <button class="btn" id="btn-arquivos">📂 Escolher arquivos</button>
+    <input type="file" id="file-nutri" accept=".json,application/json" multiple style="display:none">
+    ${importMsg ? `<div class="msg ${importMsg.tipo}">${importMsg.txt}</div>` : ''}
+  </div>
+
+  <div class="card">
     <h2>📊 Resumo geral</h2>
     <div class="stat-grid">
-      <div class="stat"><div class="num">${total}</div><div class="lbl">dias registrados</div></div>
-      <div class="stat"><div class="num ok">${total ? Math.round(100 * seguiu / total) : 0}%</div><div class="lbl">dias no plano</div></div>
-      <div class="stat"><div class="num" style="color:var(--orange)">${livres}</div><div class="lbl">livres no total</div></div>
+      <div class="stat"><div class="num">${nutriKeys.length}</div><div class="lbl">dias com nutrição</div></div>
+      <div class="stat"><div class="num ok">${s.length ? Math.round(100 * (certos + livres) / s.length) : 0}%</div><div class="lbl">dias no plano</div></div>
+      <div class="stat"><div class="num" style="color:var(--orange)">${livres}</div><div class="lbl">dias livres</div></div>
       <div class="stat"><div class="num">${pesos.length ? pesos[pesos.length-1].peso.toFixed(1) : '—'}</div><div class="lbl">último peso (kg)</div></div>
     </div>
+    ${nutriKeys.length ? `<div class="hint" style="margin-top:10px">De ${pk(nutriKeys[0]).toLocaleDateString('pt-BR')} a ${pk(nutriKeys[nutriKeys.length-1]).toLocaleDateString('pt-BR')}.</div>` : ''}
   </div>
+
   <div class="card">
     <h2>💾 Backup</h2>
-    <button class="btn primary" id="btn-export">Exportar JSON</button>
-    <button class="btn" id="btn-import">Importar JSON</button>
-    <input type="file" id="file-import" accept=".json" style="display:none">
+    <button class="btn primary" id="btn-export">Exportar tudo (JSON)</button>
+    <button class="btn danger" id="btn-limpar">Apagar nutrição</button>
     <div class="hint" style="margin-top:8px">Os dados ficam só neste dispositivo (localStorage). Exporta de vez em quando.</div>
   </div>`;
 }
 
 // ---------- charts ----------
-function setupCanvas(c) {
+function chartCtx(id) {
+  const c = document.getElementById(id);
+  if (!c) return null;
   const dpr = window.devicePixelRatio || 1;
   const w = c.clientWidth, h = c.clientHeight;
+  if (!w || !h) return null;
   c.width = w * dpr; c.height = h * dpr;
-  const ctx = c.getContext('2d');
-  ctx.scale(dpr, dpr);
+  const ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
   return { ctx, w, h };
 }
-
-function drawPesoChart() {
-  const c = document.getElementById('ch-peso');
-  if (!c) return;
-  const { ctx, w, h } = setupCanvas(c);
-  const pesos = pesosOrdenados();
-  if (pesos.length < 2) {
-    ctx.fillStyle = '#8b90a0'; ctx.font = '13px Segoe UI'; ctx.textAlign = 'center';
-    ctx.fillText('Registre pelo menos 2 pesagens pra ver o gráfico', w / 2, h / 2);
-    return;
+function msgVazio(ctx, w, h, msg) {
+  ctx.fillStyle = '#8b90a0'; ctx.font = '12px Segoe UI'; ctx.textAlign = 'center';
+  ctx.fillText(msg, w / 2, h / 2);
+}
+function grade(ctx, w, h, pad, yMin, yMax, fmt) {
+  ctx.strokeStyle = '#2b2f3e'; ctx.lineWidth = 1;
+  ctx.font = '10px Segoe UI'; ctx.textAlign = 'right';
+  for (let i = 0; i <= 4; i++) {
+    const v = yMin + (i / 4) * (yMax - yMin);
+    const y = pad.t + (1 - (v - yMin) / (yMax - yMin || 1)) * (h - pad.t - pad.b);
+    ctx.strokeStyle = '#2b2f3e';
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
+    ctx.fillStyle = '#8b90a0';
+    ctx.fillText(fmt ? fmt(v) : String(Math.round(v)), pad.l - 4, y + 3);
   }
-  const pad = { l: 38, r: 10, t: 12, b: 22 };
+}
+function eixoX(ctx, w, h, pad, datas) {
+  if (!datas.length) return;
+  ctx.fillStyle = '#8b90a0'; ctx.font = '10px Segoe UI'; ctx.textAlign = 'center';
+  const f = d => d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+  ctx.fillText(f(datas[0]), pad.l + 14, h - 4);
+  if (datas.length > 1) ctx.fillText(f(datas[datas.length - 1]), w - pad.r - 14, h - 4);
+}
+function faixa(ctx, w, pad, h, yMin, yMax, v1, v2, cor) {
+  const Y = v => pad.t + (1 - (v - yMin) / (yMax - yMin || 1)) * (h - pad.t - pad.b);
+  const y1 = Y(Math.max(v1, v2)), y2 = Y(Math.min(v1, v2));
+  ctx.fillStyle = cor;
+  ctx.fillRect(pad.l, y1, w - pad.l - pad.r, y2 - y1);
+}
+
+function desenhaGraficos() {
+  const s = serieNutri(periodo === 0 ? null : periodo);
+  drawKcal(s); drawSaldo(s); drawProt(s); drawMacros(s); drawPeso();
+}
+
+function drawKcal(s) {
+  const c = chartCtx('ch-kcal'); if (!c) return;
+  const { ctx, w, h } = c;
+  if (!s.length) return msgVazio(ctx, w, h, 'Importe JSONs para ver o gráfico');
+  const pad = { l: 40, r: 10, t: 12, b: 20 };
+  const maxV = Math.max(...s.map(x => Math.max(x.a.kcal, x.a.gasto))) * 1.1 || 100;
+  grade(ctx, w, h, pad, 0, maxV);
+  const bw = (w - pad.l - pad.r) / s.length;
+  const Y = v => pad.t + (1 - v / maxV) * (h - pad.t - pad.b);
+  s.forEach((x, i) => {
+    const bx = pad.l + i * bw + bw * 0.2;
+    ctx.fillStyle = '#4f8ef7';
+    ctx.fillRect(bx, Y(x.a.kcal), Math.max(1, bw * 0.6), h - pad.b - Y(x.a.kcal));
+  });
+  ctx.strokeStyle = '#ff9f43'; ctx.lineWidth = 2; ctx.beginPath();
+  s.forEach((x, i) => {
+    const px = pad.l + i * bw + bw / 2, py = Y(x.a.gasto);
+    i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+  });
+  ctx.stroke(); ctx.lineWidth = 1;
+  eixoX(ctx, w, h, pad, s.map(x => x.date));
+}
+
+function drawSaldo(s) {
+  const c = chartCtx('ch-saldo'); if (!c) return;
+  const { ctx, w, h } = c;
+  if (!s.length) return msgVazio(ctx, w, h, 'Importe JSONs para ver o gráfico');
+  const pad = { l: 40, r: 10, t: 12, b: 20 };
+  const vals = s.map(x => x.a.saldo);
+  const lim = Math.max(600, Math.max(...vals.map(Math.abs)) * 1.15);
+  const yMin = -lim, yMax = lim;
+  const alvo = s[s.length - 1].a.alvo;
+  faixa(ctx, w, pad, h, yMin, yMax, alvo.min, alvo.max, 'rgba(62,207,142,0.10)');
+  grade(ctx, w, h, pad, yMin, yMax);
+  const Y = v => pad.t + (1 - (v - yMin) / (yMax - yMin)) * (h - pad.t - pad.b);
+  const y0 = Y(0);
+  ctx.strokeStyle = '#8b90a0'; ctx.beginPath(); ctx.moveTo(pad.l, y0); ctx.lineTo(w - pad.r, y0); ctx.stroke();
+  const bw = (w - pad.l - pad.r) / s.length;
+  s.forEach((x, i) => {
+    const bx = pad.l + i * bw + bw * 0.2;
+    const y = Y(x.a.saldo);
+    ctx.fillStyle = x.a.saldoOK ? '#3ecf8e' : '#ff6b6b';
+    ctx.fillRect(bx, Math.min(y, y0), Math.max(1, bw * 0.6), Math.abs(y - y0) || 1);
+  });
+  eixoX(ctx, w, h, pad, s.map(x => x.date));
+}
+
+function drawProt(s) {
+  const c = chartCtx('ch-prot'); if (!c) return;
+  const { ctx, w, h } = c;
+  if (!s.length) return msgVazio(ctx, w, h, 'Importe JSONs para ver o gráfico');
+  const pad = { l: 40, r: 10, t: 12, b: 20 };
+  const metas = s.map(x => x.a.metaMax).filter(Boolean);
+  const maxV = Math.max(...s.map(x => x.a.prot), ...(metas.length ? metas : [0])) * 1.15 || 100;
+  const ult = s[s.length - 1].a;
+  if (ult.metaMin && ult.metaMax) faixa(ctx, w, pad, h, 0, maxV, ult.metaMin, ult.metaMax, 'rgba(62,207,142,0.12)');
+  grade(ctx, w, h, pad, 0, maxV);
+  const Y = v => pad.t + (1 - v / maxV) * (h - pad.t - pad.b);
+  const X = i => s.length === 1 ? (pad.l + w - pad.r) / 2 : pad.l + (i / (s.length - 1)) * (w - pad.l - pad.r);
+  ctx.strokeStyle = '#3ecf8e'; ctx.lineWidth = 2; ctx.beginPath();
+  s.forEach((x, i) => { const px = X(i), py = Y(x.a.prot); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
+  ctx.stroke(); ctx.lineWidth = 1;
+  s.forEach((x, i) => {
+    ctx.fillStyle = x.a.protOK ? '#3ecf8e' : '#ff6b6b';
+    ctx.beginPath(); ctx.arc(X(i), Y(x.a.prot), 3, 0, 7); ctx.fill();
+  });
+  eixoX(ctx, w, h, pad, s.map(x => x.date));
+}
+
+function drawMacros(s) {
+  const c = chartCtx('ch-macros'); if (!c) return;
+  const { ctx, w, h } = c;
+  if (!s.length) return msgVazio(ctx, w, h, 'Importe JSONs para ver o gráfico');
+  const pad = { l: 40, r: 10, t: 12, b: 20 };
+  const maxV = Math.max(...s.map(x => Math.max(x.a.prot, x.a.carb, x.a.gord))) * 1.15 || 100;
+  grade(ctx, w, h, pad, 0, maxV);
+  const Y = v => pad.t + (1 - v / maxV) * (h - pad.t - pad.b);
+  const X = i => s.length === 1 ? (pad.l + w - pad.r) / 2 : pad.l + (i / (s.length - 1)) * (w - pad.l - pad.r);
+  [['prot', '#3ecf8e'], ['carb', '#4f8ef7'], ['gord', '#ff9f43']].forEach(([campo, cor]) => {
+    ctx.strokeStyle = cor; ctx.lineWidth = 2; ctx.beginPath();
+    s.forEach((x, i) => { const px = X(i), py = Y(x.a[campo]); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
+    ctx.stroke();
+    if (s.length === 1) { ctx.fillStyle = cor; ctx.beginPath(); ctx.arc(X(0), Y(s[0].a[campo]), 3, 0, 7); ctx.fill(); }
+  });
+  ctx.lineWidth = 1;
+  eixoX(ctx, w, h, pad, s.map(x => x.date));
+}
+
+function drawPeso() {
+  const c = chartCtx('ch-peso'); if (!c) return;
+  const { ctx, w, h } = c;
+  let pesos = pesosOrdenados();
+  if (periodo !== 0) {
+    const corte = new Date(); corte.setDate(corte.getDate() - periodo + 1); corte.setHours(0,0,0,0);
+    pesos = pesos.filter(p => p.date >= corte);
+  }
+  if (pesos.length < 2) return msgVazio(ctx, w, h, 'Registre pelo menos 2 pesagens');
+  const pad = { l: 40, r: 10, t: 12, b: 20 };
   const t0 = pesos[0].date.getTime(), t1 = pesos[pesos.length - 1].date.getTime();
   const vals = pesos.map(p => p.peso);
-  let yMin = Math.min(...vals) - 0.5, yMax = Math.max(...vals) + 0.5;
+  const yMin = Math.min(...vals) - 0.5, yMax = Math.max(...vals) + 0.5;
   const X = t => pad.l + (t1 === t0 ? 0 : (t - t0) / (t1 - t0)) * (w - pad.l - pad.r);
-  const Y = v => pad.t + (1 - (v - yMin) / (yMax - yMin)) * (h - pad.t - pad.b);
-
-  ctx.strokeStyle = '#2b2f3e'; ctx.fillStyle = '#8b90a0'; ctx.font = '10px Segoe UI'; ctx.textAlign = 'right';
-  const passos = 4;
-  for (let i = 0; i <= passos; i++) {
-    const v = yMin + (i / passos) * (yMax - yMin);
-    const y = Y(v);
-    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
-    ctx.fillText(v.toFixed(1), pad.l - 4, y + 3);
-  }
-  ctx.textAlign = 'center';
-  ctx.fillText(pesos[0].date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }), pad.l + 14, h - 6);
-  ctx.fillText(pesos[pesos.length - 1].date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }), w - pad.r - 16, h - 6);
-
-  // pesagens brutas
+  const Y = v => pad.t + (1 - (v - yMin) / (yMax - yMin || 1)) * (h - pad.t - pad.b);
+  grade(ctx, w, h, pad, yMin, yMax, v => v.toFixed(1));
   ctx.strokeStyle = '#4f8ef766'; ctx.beginPath();
   pesos.forEach((p, i) => { const x = X(p.date.getTime()), y = Y(p.peso); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
   ctx.stroke();
   ctx.fillStyle = '#4f8ef7';
   pesos.forEach(p => { ctx.beginPath(); ctx.arc(X(p.date.getTime()), Y(p.peso), 2.5, 0, 7); ctx.fill(); });
-
-  // média móvel 7d
   ctx.strokeStyle = '#3ecf8e'; ctx.lineWidth = 2; ctx.beginPath();
   pesos.forEach((p, i) => {
     const m = mediaJanela(pesos, p.date, 7);
@@ -688,96 +984,43 @@ function drawPesoChart() {
     i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
   });
   ctx.stroke(); ctx.lineWidth = 1;
-}
-
-function drawLivresChart() {
-  const c = document.getElementById('ch-livres');
-  if (!c) return;
-  const { ctx, w, h } = setupCanvas(c);
-  const nSem = 8;
-  const semanas = [];
-  const wsAtual = weekStart(new Date());
-  for (let i = nSem - 1; i >= 0; i--) {
-    const ini = new Date(wsAtual); ini.setDate(wsAtual.getDate() - i * 7);
-    const st = semanaStats(ini);
-    semanas.push({ ini, livres: st.livres, budget: faseDe(ini).livres });
-  }
-  const pad = { l: 24, r: 10, t: 12, b: 22 };
-  const maxV = Math.max(3, ...semanas.map(s => s.livres));
-  const bw = (w - pad.l - pad.r) / nSem;
-  const Y = v => pad.t + (1 - v / maxV) * (h - pad.t - pad.b);
-
-  ctx.font = '10px Segoe UI';
-  semanas.forEach((s, i) => {
-    const x = pad.l + i * bw + bw * 0.18;
-    const dentro = s.livres <= s.budget;
-    ctx.fillStyle = s.livres === 0 ? '#2b2f3e' : (dentro ? '#3ecf8e' : '#ff6b6b');
-    const y = Y(s.livres);
-    ctx.fillRect(x, y, bw * 0.64, h - pad.b - y);
-    ctx.fillStyle = '#8b90a0'; ctx.textAlign = 'center';
-    ctx.fillText(s.ini.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }), x + bw * 0.32, h - 6);
-    if (s.livres > 0) { ctx.fillStyle = '#e8eaf0'; ctx.fillText(s.livres, x + bw * 0.32, y - 4); }
-    // linha do orçamento
-    ctx.strokeStyle = '#ff9f43'; ctx.setLineDash([3, 3]); ctx.beginPath();
-    ctx.moveTo(pad.l + i * bw, Y(s.budget)); ctx.lineTo(pad.l + (i + 1) * bw, Y(s.budget));
-    ctx.stroke(); ctx.setLineDash([]);
-  });
+  eixoX(ctx, w, h, pad, pesos.map(p => p.date));
 }
 
 // ---------- eventos ----------
+function resultadoMsg(res) {
+  if (!res || res.cancelado) return null;
+  if (res.erro) return { tipo: 'err', txt: '❌ ' + res.erro };
+  if (res.backup) return { tipo: 'ok', txt: `✅ Backup restaurado: ${res.dias} dia(s) de peso e ${res.nutri} de nutrição.` };
+  const partes = [];
+  if (res.n) partes.push(`✅ ${res.n} dia(s) importado(s).`);
+  if (res.erros && res.erros.length) partes.push(`⚠️ ${res.erros.length} ignorado(s): ${res.erros.slice(0,3).join('; ')}`);
+  if (!partes.length) return { tipo: 'err', txt: '❌ Nada importado — confira o formato do JSON.' };
+  return { tipo: res.n ? 'ok' : 'err', txt: partes.join(' ') };
+}
+
 function bind() {
-  document.querySelectorAll('[data-segui]').forEach(el => el.onclick = () => {
-    const val = el.dataset.segui === 'true';
-    const key = k(selDate);
-    const atual = (getDia(key) || {}).segui;
-    setDia(key, { segui: atual === val ? null : val });
-    render();
-  });
-  document.querySelectorAll('[data-junk]').forEach(el => el.onclick = () => {
-    const key = k(selDate);
-    const dia = getDia(key) || {};
-    setDia(key, { [el.dataset.junk]: !dia[el.dataset.junk] });
-    render();
-  });
-  document.querySelectorAll('[data-fruta]').forEach(el => el.onclick = () => {
-    const key = k(selDate);
-    const dia = getDia(key) || {};
-    setDia(key, { fruta: !dia.fruta });
-    render();
-  });
   const pin = document.getElementById('peso-in');
   if (pin) pin.onchange = () => {
     const v = parseFloat(pin.value);
     setDia(k(selDate), { peso: isNaN(v) ? null : v });
     render();
   };
+  const irDados = document.getElementById('ir-dados');
+  if (irDados) irDados.onclick = () => { tab = 'dados'; render(); };
   const dp = document.getElementById('d-prev');
   if (dp) dp.onclick = () => { selDate.setDate(selDate.getDate() - 1); render(); };
   const dn = document.getElementById('d-next');
-  if (dn) dn.onclick = () => {
-    if (k(selDate) !== hojeK()) { selDate.setDate(selDate.getDate() + 1); render(); }
-  };
+  if (dn) dn.onclick = () => { if (k(selDate) !== hojeK()) { selDate.setDate(selDate.getDate() + 1); render(); } };
   const dh = document.getElementById('d-hoje');
   if (dh) dh.onclick = () => { selDate = new Date(); render(); };
-  document.querySelectorAll('[data-filtro]').forEach(el => el.onclick = () => {
-    calFiltro = el.dataset.filtro || null;
-    render();
-  });
+
   const pp = document.getElementById('p-prev');
   if (pp) pp.onclick = () => { planDate.setDate(planDate.getDate() - 1); render(); };
   const pn = document.getElementById('p-next');
   if (pn) pn.onclick = () => { planDate.setDate(planDate.getDate() + 1); render(); };
   const ph = document.getElementById('p-hoje');
   if (ph) ph.onclick = () => { planDate = new Date(); render(); };
-  document.querySelectorAll('[data-refhead]').forEach(el => el.onclick = () => {
-    refAberta = refAberta === el.dataset.refhead ? null : el.dataset.refhead;
-    render();
-  });
-  document.querySelectorAll('[data-refmark]').forEach(el => el.onclick = (e) => {
-    e.stopPropagation();
-    setDiaRef(k(planDate), el.dataset.refslug, el.dataset.refmark);
-    render();
-  });
   document.querySelectorAll('.carrossel').forEach(car => {
     const dots = document.querySelector(`[data-dots="${car.dataset.car}"]`);
     if (!dots) return;
@@ -787,15 +1030,58 @@ function bind() {
       car.scrollTo({ left: (+d.dataset.go) * car.clientWidth, behavior: 'smooth' });
     });
   });
+
+  document.querySelectorAll('[data-filtro]').forEach(el => el.onclick = () => {
+    calFiltro = el.dataset.filtro || null;
+    render();
+  });
   const mp = document.getElementById('m-prev');
   if (mp) mp.onclick = () => { calRef.setMonth(calRef.getMonth() - 1); render(); };
   const mn = document.getElementById('m-next');
   if (mn) mn.onclick = () => { calRef.setMonth(calRef.getMonth() + 1); render(); };
   document.querySelectorAll('[data-day]').forEach(el => el.onclick = () => {
-    selDate = pk(el.dataset.day);
-    if (selDate > new Date()) return;
-    tab = 'hoje'; render();
+    const d = pk(el.dataset.day);
+    if (d > new Date()) return;
+    selDate = d; tab = 'hoje'; render();
   });
+
+  document.querySelectorAll('[data-per]').forEach(el => el.onclick = () => {
+    periodo = +el.dataset.per; render();
+  });
+
+  const bc = document.getElementById('btn-colar');
+  if (bc) bc.onclick = () => {
+    const txt = (document.getElementById('nutri-txt').value || '').trim();
+    if (!txt) { importMsg = { tipo: 'err', txt: '❌ Cole o JSON na caixa acima.' }; render(); return; }
+    importMsg = resultadoMsg(importarTexto(txt));
+    render();
+  };
+  const ba = document.getElementById('btn-arquivos');
+  const fn = document.getElementById('file-nutri');
+  if (ba && fn) {
+    ba.onclick = () => fn.click();
+    fn.onchange = () => {
+      const files = [...fn.files];
+      if (!files.length) return;
+      let n = 0; const erros = [];
+      let pendentes = files.length;
+      files.forEach(file => {
+        const r = new FileReader();
+        r.onload = () => {
+          const res = importarTexto(r.result);
+          if (res.erro) erros.push(file.name + ': ' + res.erro);
+          else if (res.backup) n += res.nutri;
+          else { n += res.n || 0; (res.erros || []).forEach(e => erros.push(file.name + ': ' + e)); }
+          if (--pendentes === 0) { importMsg = resultadoMsg({ n, erros }); render(); }
+        };
+        r.onerror = () => {
+          erros.push(file.name + ': falha ao ler');
+          if (--pendentes === 0) { importMsg = resultadoMsg({ n, erros }); render(); }
+        };
+        r.readAsText(file);
+      });
+    };
+  }
   const be = document.getElementById('btn-export');
   if (be) be.onclick = () => {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
@@ -804,27 +1090,17 @@ function bind() {
     a.download = 'dieta-tracker-' + hojeK() + '.json';
     a.click();
   };
-  const bi = document.getElementById('btn-import');
-  const fi = document.getElementById('file-import');
-  if (bi && fi) {
-    bi.onclick = () => fi.click();
-    fi.onchange = () => {
-      const f = fi.files[0];
-      if (!f) return;
-      const r = new FileReader();
-      r.onload = () => {
-        try {
-          const s = JSON.parse(r.result);
-          if (!s.dias) throw new Error('formato inválido');
-          if (confirm('Substituir os dados atuais pelos do arquivo?')) { state = s; save(); render(); }
-        } catch (e) { alert('Arquivo inválido: ' + e.message); }
-      };
-      r.readAsText(f);
-    };
-  }
+  const bl = document.getElementById('btn-limpar');
+  if (bl) bl.onclick = () => {
+    if (!confirm('Apagar TODOS os dados de nutrição importados? (os pesos são mantidos)')) return;
+    state.nutri = {}; save();
+    importMsg = { tipo: 'ok', txt: '✅ Dados de nutrição apagados.' };
+    render();
+  };
 }
 
-document.querySelectorAll('nav button').forEach(b => b.onclick = () => { tab = b.dataset.tab; render(); });
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => { tab = b.dataset.tab; importMsg = null; render(); });
+window.addEventListener('resize', () => { if (tab === 'graficos') desenhaGraficos(); });
 render();
 
 // PWA: service worker para funcionar offline
