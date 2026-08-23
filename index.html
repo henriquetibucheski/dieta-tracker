@@ -166,30 +166,30 @@
   .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; font-size: 0.7rem; color: var(--muted); }
   .legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
 
-  /* ---- plano ---- */
-  .ref-row { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
-  .ref-row:last-child { border-bottom: none; }
-  .ref-hora { width: 52px; flex-shrink: 0; color: var(--green); font-size: 0.75rem; font-weight: 700; padding-top: 2px; }
-  .ref-nome { font-weight: 600; font-size: 0.85rem; }
-  .ref-desc { font-size: 0.78rem; color: var(--muted); margin-top: 2px; line-height: 1.45; }
-  .prep-item { font-size: 0.8rem; color: var(--muted); padding: 5px 0; line-height: 1.4; }
+  /* ---- plano (guia macro) ---- */
+  .prep-item { font-size: 0.82rem; color: var(--muted); padding: 5px 0; line-height: 1.5; }
   .prep-item b { color: var(--text); }
-  .ref-swipe-hint { font-size: 0.64rem; color: var(--muted); font-weight: 400; }
-  .carrossel {
-    display: flex; gap: 8px; overflow-x: auto; margin-top: 4px;
-    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none;
-  }
-  .carrossel::-webkit-scrollbar { display: none; }
-  .opt {
-    flex: 0 0 100%; scroll-snap-align: start; box-sizing: border-box;
-    background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 9px 11px;
-  }
-  .opt-tag { font-size: 0.66rem; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
-  .opt-desc { font-size: 0.8rem; color: var(--text); line-height: 1.45; }
-  .dots { display: flex; gap: 5px; justify-content: center; margin-top: 7px; }
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); cursor: pointer; transition: background .2s, width .2s; }
-  .dot.on { background: var(--green); width: 16px; border-radius: 3px; }
-  .ref-nota { font-size: 0.74rem; color: var(--muted); margin-top: 7px; font-style: italic; }
+  .tl-wrap { position: relative; margin-top: 6px; }
+  .timeline { display: flex; height: 12px; border-radius: 6px; overflow: hidden; gap: 2px; }
+  .tl-seg { height: 100%; border-radius: 2px; opacity: 0.4; }
+  .tl-seg.done { opacity: 0.75; }
+  .tl-seg.atual { opacity: 1; box-shadow: 0 0 0 2px rgba(255,255,255,0.35) inset; }
+  .tl-marker { position: absolute; top: -3px; width: 2px; height: 18px; background: #fff; border-radius: 1px; }
+  .tl-lbls { display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--muted); margin-top: 6px; }
+  .bloco-foco { font-size: 0.85rem; line-height: 1.5; }
+  .bloco-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .bloco-row:last-of-type { border-bottom: none; }
+  .bloco-row.passado { opacity: 0.42; }
+  .bloco-row.atual { background: var(--card2); border-radius: 10px; padding: 9px 10px; border-bottom: none; }
+  .bloco-cor { width: 4px; align-self: stretch; min-height: 30px; border-radius: 2px; flex-shrink: 0; }
+  .bloco-nome { font-size: 0.85rem; font-weight: 600; }
+  .bloco-per { font-size: 0.7rem; color: var(--muted); margin-top: 1px; }
+  .bloco-metas { text-align: right; font-size: 0.74rem; white-space: nowrap; }
+  .bloco-metas .g { color: var(--muted); font-size: 0.7rem; }
+  .tag-agora { font-size: 0.6rem; background: var(--accent); color: #fff; border-radius: 5px; padding: 1px 6px; vertical-align: 1px; }
+  /* faixa de periodização no calendário */
+  .cal-fases { display: flex; gap: 2px; margin-bottom: 8px; height: 20px; }
+  .cal-fase { display: flex; align-items: center; justify-content: center; border-radius: 5px; font-size: 0.6rem; color: #0f1117; font-weight: 700; overflow: hidden; white-space: nowrap; }
 
   /* ---- gráficos ---- */
   canvas { width: 100%; height: 200px; display: block; }
@@ -241,14 +241,101 @@
 
 <script>
 const KEY = 'dieta-tracker-v1';
-const FASES = [
-  { nome: 'Manutenção', ini: '2026-06-09', fim: '2026-11-08', kcal: '~2.500–2.700 kcal', prot: '160–170g proteína', livres: 2, meta: 'Peso estável (79–81 kg)', deficit: false },
-  { nome: 'Polimento — leve déficit', ini: '2026-11-09', fim: '2026-12-20', kcal: '~2.200–2.400 kcal', prot: '170–180g proteína', livres: 1, meta: '−0,3 kg/semana', deficit: true },
-  { nome: 'Pós-meta — manutenção', ini: '2026-12-21', fim: '2027-12-31', kcal: 'manutenção', prot: '160g+', livres: 2, meta: 'Manter o shape 🏖️', deficit: false },
+// Periodização alimentar espelhando os blocos do PLANO-DE-TREINO.
+// kcal = faixa de ingestão do dia (PLANO-ALIMENTAR); prot = g por kg de peso.
+const BLOCOS = [
+  { nome: 'Base', tipo: 'base', ini: '2026-06-09', fim: '2026-07-05',
+    treino: 'Bloco 1 — Base (técnica e consistência)',
+    kcalMin: 2500, kcalMax: 2700, protGkg: 2.0, livres: 2, deficit: false,
+    meta: 'Peso estável (79–81 kg)',
+    foco: 'Construir o hábito antes de mexer em caloria.',
+    acoes: [
+      'Fechar a proteína <b>todos os dias</b> — é o hábito que sustenta o ano inteiro.',
+      'Peso estável: a balança semanal é o termômetro, não a calculadora.',
+      'Firmar a rotina de meal prep de domingo.',
+    ] },
+  { nome: 'Hipertrofia I', tipo: 'hiper', ini: '2026-07-06', fim: '2026-08-09',
+    treino: 'Bloco 2 — Acúmulo de volume',
+    kcalMin: 2600, kcalMax: 2800, protGkg: 2.0, livres: 2, deficit: false,
+    meta: 'Ganho lento: +0,1 a 0,2 kg/semana',
+    foco: 'Volume alto pede combustível — leve superávit.',
+    acoes: [
+      'Não pular o carbo pré-treino das 16h30: é ele que segura o volume de série.',
+      'Ganhar ~0,15 kg/semana é o esperado — isso é músculo, não gordura.',
+      'Peso parado por 2 semanas? Some 1 punho de carbo no jantar.',
+    ] },
+  { nome: 'Deload', tipo: 'deload', ini: '2026-08-10', fim: '2026-08-16',
+    treino: 'Deload — séries −40%',
+    kcalMin: 2400, kcalMax: 2600, protGkg: 2.0, livres: 1, deficit: false,
+    meta: 'Peso estável',
+    foco: 'Treino leve, caloria acompanha — proteína não.',
+    acoes: [
+      'Gasto cai junto com o volume: segura 1 punho de carbo por dia.',
+      '<b>Proteína NÃO cai</b> — é ela que segura a massa na semana leve.',
+      'Dormir as 8h religiosamente: recuperar é o objetivo da semana.',
+    ] },
+  { nome: 'Força-Hipertrofia', tipo: 'forca', ini: '2026-08-17', fim: '2026-09-20',
+    treino: 'Bloco 3 — Cargas pesadas (5–8 reps)',
+    kcalMin: 2500, kcalMax: 2750, protGkg: 2.0, livres: 2, deficit: false,
+    meta: 'Peso estável a leve alta',
+    foco: 'Força se constrói abastecido.',
+    acoes: [
+      'Comer antes de treinar pesado — série de 5 com tanque vazio não rende.',
+      'Creatina 5g <b>todo dia</b>, treinando ou não.',
+      '3L de água nos dias de treino + corrida.',
+    ] },
+  { nome: 'Deload', tipo: 'deload', ini: '2026-09-21', fim: '2026-09-27',
+    treino: 'Deload — séries −40%',
+    kcalMin: 2400, kcalMax: 2600, protGkg: 2.0, livres: 1, deficit: false,
+    meta: 'Peso estável',
+    foco: 'Segunda semana leve do ano.',
+    acoes: [
+      'Mesma lógica: menos carbo, mesma proteína.',
+      'Semana boa pra reorganizar a despensa e o prep.',
+    ] },
+  { nome: 'Hipertrofia II', tipo: 'hiper', ini: '2026-09-28', fim: '2026-11-01',
+    treino: 'Bloco 4 — Pico: falha, drop-sets e rest-pause',
+    kcalMin: 2700, kcalMax: 2900, protGkg: 2.1, livres: 2, deficit: false,
+    meta: 'Ganho de +0,1 a 0,2 kg/semana',
+    foco: 'Bloco mais duro do ano — a recuperação manda.',
+    acoes: [
+      'Maior demanda do ano: <b>proteína sobe pra 2,1 g/kg</b>.',
+      'Carbo alto nos dias A/B/C — drop-set esvazia o glicogênio.',
+      'Último bloco de construção: é aqui que o volume aparece pra dezembro.',
+    ] },
+  { nome: 'Deload', tipo: 'deload', ini: '2026-11-02', fim: '2026-11-08',
+    treino: 'Deload — transição pro corte',
+    kcalMin: 2400, kcalMax: 2600, protGkg: 2.1, livres: 1, deficit: false,
+    meta: 'Peso estável',
+    foco: 'A rampa de entrada do déficit.',
+    acoes: [
+      'Começa a tirar o carbo extra do bloco anterior.',
+      'Chegar leve no polimento, não estufado.',
+    ] },
+  { nome: 'Polimento', tipo: 'polimento', ini: '2026-11-09', fim: '2026-12-20',
+    treino: 'Bloco 5 — Definição (descansos curtos + cardio)',
+    kcalMin: 2200, kcalMax: 2400, protGkg: 2.15, livres: 1, deficit: true,
+    meta: '−0,3 kg/semana',
+    foco: 'Revelar o que foi construído nos 5 meses.',
+    acoes: [
+      '<b>Proteína sobe enquanto a caloria cai</b> — é o que protege o músculo.',
+      'Corta carbo e gordura. <b>Nunca proteína.</b>',
+      'Caiu mais que 0,5 kg/semana? Está perdendo músculo — sobe a caloria.',
+      'Cerveja quinzenal, no máximo.',
+    ] },
+  { nome: 'Praia', tipo: 'manutencao', ini: '2026-12-21', fim: '2027-12-31', aberto: true,
+    treino: 'Manutenção 🏖️',
+    kcalMin: 2500, kcalMax: 2700, protGkg: 2.0, livres: 2, deficit: false,
+    meta: 'Manter o shape',
+    foco: 'Missão cumprida — segurar o resultado.',
+    acoes: [
+      'Voltar pra manutenção devagar: +100 kcal por semana.',
+      'Aproveitar. Foram 6 meses de trabalho.',
+    ] },
 ];
+const COR_TIPO = { base: '#6b7bd6', hiper: '#4f8ef7', forca: '#9b7ede', deload: '#8b90a0', polimento: '#ff9f43', manutencao: '#3ecf8e' };
 const WD = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const ATIVIDADE_DIA = { 1: 'Treino A 🏋️', 2: 'Corrida 5km 🏃', 3: 'Treino B 🏋️', 4: 'Descanso 😴', 5: 'Treino C 🏋️', 6: 'Descanso 😴', 0: 'Corrida 10km 🏃' };
 
 // Detecção automática a partir dos nomes dos itens do JSON
 const KW_FRUTA = ['banana','maca','uva','laranja','mexerica','tangerina','morango','manga','abacaxi','melancia','melao','pera','kiwi','mamao','goiaba','ameixa','pessego','cereja','framboesa','mirtilo','blueberry','amora','caqui','figo','maracuja','acerola','fruta','abacate','ponkan','nectarina'];
@@ -260,58 +347,11 @@ const FLAGS = [
   { id: 'besteira', em: '🍕', lbl: 'Besteira', cor: 'orange' },
 ];
 
-// Opções de lanche — deslize lateral no app
-const LANCHE_MANHA = [
-  { t: 'Clássico', d: '1 fruta (banana, maçã ou uva) + 1 iogurte natural ou skyr' },
-  { t: 'Proteico', d: '1 pote de skyr + 1 punhado de castanhas (~20g)' },
-  { t: 'Salgado', d: '2 ovos cozidos do prep + 1 fruta' },
-  { t: 'Queijo', d: '2 fatias de queijo branco + 1 fruta' },
-  { t: 'Na correria', d: '1 iogurte de garrafinha + 1 banana' },
-];
-const PRE_TREINO = [
-  { t: 'Clássico', d: '1 banana + 2 col. sopa de aveia' },
-  { t: 'Pão', d: '1 pão de forma integral c/ 2 fatias de queijo' },
-  { t: 'Tapioca', d: '1 tapioca pequena com queijo' },
-  { t: 'Doce natural', d: '1 banana amassada c/ fio de mel e canela' },
-  { t: 'Prático', d: '1 punhado de uva-passa + 1 banana' },
-];
-const LANCHE_TARDE = [
-  { t: 'Clássico', d: 'Cottage ou iogurte proteico + 1 fruta' },
-  { t: 'Ovos', d: '2 ovos cozidos do prep + 1 fruta' },
-  { t: 'Whey', d: '1 dose de whey batido na água + 1 fruta' },
-  { t: 'Queijo', d: '2 fatias de queijo + castanhas + 1 fruta' },
-  { t: 'Despensa', d: '1 lata de atum com tomate (emergência)' },
-];
-
-function refeicoesDoDia(date) {
-  const dow = date.getDay();
-  const pol = faseDe(date).deficit;
-  const treinoTarde = [1, 2, 3, 5].includes(dow);
-  const r = [];
-  r.push({ h: '7h30', n: 'Café da manhã', d: 'Crepioca (2 ovos + 2 col. sopa de tapioca) + 1 col. sopa de creme de ricota + café' + (dow === 0 ? ' — antes da corrida de 10km, como sempre' : '') });
-  r.push({ h: '10h', n: 'Lanche da manhã 🍎', opts: LANCHE_MANHA });
-  if (dow === 0) r.push({ h: '12h30', n: 'Almoço', d: 'Livre social (se for o livre da semana) ou regra do prato: ½ vegetais, ¼ proteína grelhada, ¼ carbo' });
-  else if (dow === 6) r.push({ h: '12h', n: 'Almoço', d: 'Regra do prato: ½ vegetais, ¼ proteína grelhada, ¼ carbo (em casa ou fora)' });
-  else r.push({ h: '12h', n: 'Almoço (PF)', d: '2 palmas de frango ou peixe grelhado + 4–5 col. sopa de arroz + 1 concha de feijão + metade do prato de salada/legumes com fio de azeite. Sem fritura, farofa e refri — bebida é água.' });
-  if (treinoTarde) {
-    if (pol) r.push({ h: '16h30', n: 'Pré-treino ⚡', d: '1 banana (no polimento a aveia sai — mantém leve)', nota: 'Não pula — é o que segura a energia no fim do treino.' });
-    else r.push({ h: '16h30', n: 'Pré-treino ⚡', opts: PRE_TREINO, nota: 'Não pula — é o que segura a energia no fim do treino.' });
-    r.push({ h: '~19h', n: 'Pós-treino', d: 'Whey 1 dose + creatina 5g' });
-  } else {
-    r.push({ h: '16h30', n: 'Lanche da tarde', opts: LANCHE_TARDE, nota: 'Creatina 5g mesmo sem treino!' });
-  }
-  if (dow === 0) r.push({ h: 'tarde', n: 'Meal prep 🍳', d: 'Preparar as 5 marmitas da semana — checklist no card abaixo' });
-  if (dow === 4) r.push({ h: '20h', n: 'Jantar 🍕', d: 'Quinta clássica da pizza: 3–4 fatias, sem refri açucarado — e segue o jogo. (Sem pizza hoje? Marmita normal.)' });
-  else r.push({ h: '20h', n: 'Jantar (marmita)', d: pol ? '2 palmas de proteína + 1 punho de carbo (polimento) + metade do pote de legumes' : '2 palmas de proteína + 1,5 punho de carbo + metade do pote de legumes' });
-  return r;
-}
-
 let state = load();
 let tab = 'hoje';
 let selDate = new Date();
 let calRef = new Date();
 let calFiltro = null;
-let planDate = new Date();
 let periodo = 30;
 let importMsg = null;
 
@@ -336,8 +376,29 @@ function setDia(key, patch) {
 function hojeK() { return k(new Date()); }
 function faseDe(d) {
   const key = k(d);
-  for (const f of FASES) if (key >= f.ini && key <= f.fim) return f;
-  return FASES[0];
+  for (const b of BLOCOS) if (key >= b.ini && key <= b.fim) return b;
+  return key < BLOCOS[0].ini ? BLOCOS[0] : BLOCOS[BLOCOS.length - 1];
+}
+// peso de referência do dia, pra converter g/kg em gramas
+function pesoRef(key) {
+  const doDia = (state.dias[key] || {}).peso;
+  if (doDia) return doDia;
+  const ps = pesosOrdenados();
+  if (ps.length) {
+    const ate = ps.filter(p => p.key <= key);
+    return (ate.length ? ate[ate.length - 1] : ps[0]).peso;
+  }
+  return 79;
+}
+function metasDoDia(key) {
+  const b = faseDe(pk(key));
+  const peso = pesoRef(key);
+  return {
+    bloco: b, peso: peso,
+    protMin: Math.round(b.protGkg * peso),
+    protMax: Math.round((b.protGkg + 0.15) * peso),
+    kcalMin: b.kcalMin, kcalMax: b.kcalMax,
+  };
 }
 function weekStart(d) {
   const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -379,9 +440,6 @@ function detectaFlags(j) {
   return f;
 }
 
-function alvoSaldo(date) {
-  return faseDe(date).deficit ? { min: -600, max: -100 } : { min: -300, max: 300 };
-}
 
 function analisaNutri(j, date) {
   if (!j) return null;
@@ -395,19 +453,19 @@ function analisaNutri(j, date) {
   const tmb = num(r.kcal_gastas_tmb, num((j.usuario || {}).tmb_kcal, 0));
   const gasto = num(r.kcal_gastas_total, tmb + exer);
   const saldo = num(r.saldo_kcal_estimado, kcal - gasto);
-  const mp = (j.usuario || {}).meta_proteina || {};
-  const alvo = alvoSaldo(date);
+  // metas vêm da periodização do plano (não do meta_proteina do JSON)
+  const m = metasDoDia(k(date));
   const flags = detectaFlags(j);
-  const protOK = mp.min_g ? prot >= mp.min_g : true;
-  const saldoOK = saldo >= alvo.min && saldo <= alvo.max;
-  // fora da meta (proteina ou saldo) pesa mais que o livre planejado
+  const protOK = prot >= m.protMin;
+  const kcalOK = kcal >= m.kcalMin && kcal <= m.kcalMax;
+  // fora da meta (proteina ou caloria) pesa mais que o livre planejado
   let status;
-  if (!protOK || !saldoOK) status = 'atencao';
+  if (!protOK || !kcalOK) status = 'atencao';
   else if (flags.alcool || flags.besteira) status = 'livre';
   else status = 'certo';
   return {
-    kcal, prot, carb, gord, exer, tmb, gasto, saldo, alvo, flags, status, protOK, saldoOK,
-    metaMin: mp.min_g || null, metaMax: mp.max_g || null,
+    kcal, prot, carb, gord, exer, tmb, gasto, saldo, flags, status, protOK, kcalOK, bloco: m.bloco,
+    metaMin: m.protMin, metaMax: m.protMax, kcalMin: m.kcalMin, kcalMax: m.kcalMax,
     refeicoes: j.refeicoes || [], exercicios: j.exercicios || [], peso: (j.usuario || {}).peso_kg || null,
   };
 }
@@ -519,10 +577,11 @@ function render() {
 
 function faseBannerHtml() {
   const f = faseDe(new Date());
+  const mHoje = metasDoDia(hojeK());
   const restam = diasAte(f.fim);
   const ateProa = diasAte('2026-12-20');
   return `<div class="fase-banner ${f.deficit ? 'deficit' : ''}">
-    <b>${f.nome}</b> · ${f.kcal} · ${f.prot}
+    <b>${f.nome}</b> · ${fmtN(f.kcalMin)}–${fmtN(f.kcalMax)} kcal · ${mHoje.protMin}–${mHoje.protMax}g proteína
     <div class="meta">Meta: ${f.meta} · ${f.livres} livre(s)/semana · ${Math.ceil(restam/7)} sem. nesta fase · ${Math.ceil(ateProa/7)} sem. até a praia 🏖️</div>
   </div>`;
 }
@@ -548,16 +607,16 @@ function renderDia() {
     const posMeta = a.metaMax && a.metaMin ? 100 * a.metaMin / a.metaMax : null;
     const kcalCarb = a.carb * 4, kcalGord = a.gord * 9, kcalProt = a.prot * 4;
     const totalMacro = kcalCarb + kcalGord + kcalProt || 1;
-    const saldoBom = a.saldoOK;
     corpo = `
     <div class="bal-grid">
       <div class="bal"><div class="n" style="color:var(--accent)">${fmtN(a.kcal)}</div><div class="l">ingeridas</div></div>
       <div class="bal"><div class="n" style="color:var(--orange)">${fmtN(a.gasto)}</div><div class="l">gastas</div></div>
       <div class="bal"><div class="n">${fmtN(a.exer)}</div><div class="l">exercício</div></div>
     </div>
-    <div class="saldo-box ${saldoBom ? 'bom' : 'fora'}">
-      <div class="v">${a.saldo >= 0 ? '+' : ''}${fmtN(a.saldo)} kcal</div>
-      <div class="d">${a.saldo < 0 ? 'déficit' : 'superávit'} · alvo da fase: ${a.alvo.min} a ${a.alvo.max > 0 ? '+' + a.alvo.max : a.alvo.max} kcal ${saldoBom ? '✅' : '⚠️'}</div>
+    <div class="saldo-box ${a.kcalOK ? 'bom' : 'fora'}">
+      <div class="v">${fmtN(a.kcal)} kcal ${a.kcalOK ? '✅' : '⚠️'}</div>
+      <div class="d">meta do bloco <b style="color:${COR_TIPO[a.bloco.tipo]}">${a.bloco.nome}</b>: ${fmtN(a.kcalMin)}–${fmtN(a.kcalMax)} kcal
+      · saldo do dia ${a.saldo >= 0 ? '+' : ''}${fmtN(a.saldo)}</div>
     </div>
 
     <div class="macro">
@@ -622,52 +681,112 @@ function renderDia() {
   </div>`;
 }
 
+function pctBloco(b) {
+  const ini = pk(b.ini), fim = pk(b.fim), hoje = new Date();
+  if (hoje < ini) return 0;
+  if (hoje > fim) return 100;
+  return Math.round(100 * (hoje - ini) / (fim - ini || 1));
+}
+const MES_ABBR = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+function dm(s) { const d = pk(s); return String(d.getDate()).padStart(2,'0') + '/' + MES_ABBR[d.getMonth()]; }
+function fmtPeriodo(b) {
+  return b.aberto ? 'a partir de ' + dm(b.ini) : dm(b.ini) + ' – ' + dm(b.fim);
+}
+
 function renderPlano() {
-  const dow = planDate.getDay();
-  const f = faseDe(planDate);
-  const ehHoje = k(planDate) === hojeK();
-  const dtLbl = planDate.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
-  const refs = refeicoesDoDia(planDate);
-  return faseBannerHtml() + `
+  const hoje = new Date();
+  const atual = faseDe(hoje);
+  const iAtual = BLOCOS.indexOf(atual);
+  const m = metasDoDia(hojeK());
+  const semanasRestam = Math.ceil(diasAte(atual.fim) / 7);
+  const ateProa = Math.ceil(diasAte('2026-12-20') / 7);
+  const prox = BLOCOS[iAtual + 1];
+
+  // barra da periodização inteira (proporcional à duração de cada bloco)
+  const t0 = pk(BLOCOS[0].ini).getTime(), tN = pk(BLOCOS[BLOCOS.length - 2].fim).getTime();
+  const segs = BLOCOS.slice(0, -1).map((b, i) => {
+    const dur = (pk(b.fim) - pk(b.ini)) || 1;
+    const passado = hoje > pk(b.fim);
+    return `<div class="tl-seg ${i === iAtual ? 'atual' : ''} ${passado ? 'done' : ''}"
+      style="flex:${dur}; background:${COR_TIPO[b.tipo]}" title="${b.nome}"></div>`;
+  }).join('');
+  const pctAno = Math.max(0, Math.min(100, 100 * (hoje.getTime() - t0) / (tN - t0 || 1)));
+
+  return `
   <div class="card">
-    <div class="date-nav">
-      <button id="p-prev">‹</button>
-      <div class="dt">${dtLbl}<span class="sub">${ehHoje ? 'hoje · ' : ''}${ATIVIDADE_DIA[dow]}${ehHoje ? '' : ' · <span id="p-hoje" style="color:var(--accent);cursor:pointer">voltar pra hoje</span>'}</span></div>
-      <button id="p-next">›</button>
+    <h2>🗓️ Periodização até dezembro</h2>
+    <div class="tl-wrap">
+      <div class="timeline">${segs}</div>
+      <div class="tl-marker" style="left:${pctAno}%"></div>
     </div>
-    ${refs.map((r, i) => `<div class="ref-row">
-      <div class="ref-hora">${r.h}</div>
-      <div style="flex:1; min-width:0">
-        <div class="ref-nome">${r.n}${r.opts ? ` <span class="ref-swipe-hint">· ${r.opts.length} opções, deslize ↔</span>` : ''}</div>
-        ${r.opts
-          ? `<div class="carrossel" data-car="${i}">${r.opts.map(o => `<div class="opt"><div class="opt-tag">${o.t}</div><div class="opt-desc">${o.d}</div></div>`).join('')}</div>
-             <div class="dots" data-dots="${i}">${r.opts.map((o, j) => `<span class="dot ${j === 0 ? 'on' : ''}" data-go="${j}"></span>`).join('')}</div>`
-          : `<div class="ref-desc">${r.d}</div>`}
-        ${r.nota ? `<div class="ref-nota">${r.nota}</div>` : ''}
-      </div>
-    </div>`).join('')}
+    <div class="tl-lbls"><span>09/jun</span><span>20/dez 🏖️</span></div>
+    <div class="hint" style="margin-top:10px">A dieta segue os blocos do treino: come mais quando o volume sobe, segura no deload, corta no polimento.</div>
+  </div>
+
+  <div class="card" style="border-color:${COR_TIPO[atual.tipo]}">
+    <div style="font-size:0.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px">Agora · ${fmtPeriodo(atual)}</div>
+    <h2 style="margin:4px 0 2px; color:${COR_TIPO[atual.tipo]}">${atual.nome}</h2>
+    <div class="hint" style="margin:0 0 12px">${atual.treino}</div>
+    <div class="bloco-foco">${atual.foco}</div>
+
+    <div class="bal-grid" style="margin-top:12px">
+      <div class="bal"><div class="n" style="color:var(--accent)">${fmtN(atual.kcalMin)}–${fmtN(atual.kcalMax)}</div><div class="l">kcal/dia</div></div>
+      <div class="bal"><div class="n ok">${m.protMin}–${m.protMax}g</div><div class="l">proteína (${atual.protGkg}g/kg)</div></div>
+      <div class="bal"><div class="n" style="color:var(--orange)">${atual.livres}</div><div class="l">livres/semana</div></div>
+    </div>
+    <div class="hint" style="margin-top:8px">Meta na balança: <b style="color:var(--text)">${atual.meta}</b> · faltam ${semanasRestam} semana(s) neste bloco · ${ateProa} até a praia 🏖️</div>
+
+    <h3 style="margin:14px 0 6px; font-size:0.9rem">O que fazer neste bloco</h3>
+    ${atual.acoes.map(x => `<div class="prep-item">• ${x}</div>`).join('')}
+    ${prox ? `<div class="hint" style="margin-top:12px">➡️ Depois vem <b style="color:${COR_TIPO[prox.tipo]}">${prox.nome}</b> (${fmtPeriodo(prox)}): ${fmtN(prox.kcalMin)}–${fmtN(prox.kcalMax)} kcal, ${prox.protGkg}g/kg de proteína.</div>` : ''}
   </div>
 
   <div class="card">
-    <h2>📌 Regras de ouro</h2>
-    <div class="prep-item"><b>Proteína em toda refeição</b> — 160g+/dia é o único número inegociável.</div>
-    <div class="prep-item"><b>2 frutas por dia</b> — lanches de 10h e 16h30.</div>
-    <div class="prep-item"><b>${f.livres} livre(s)/semana</b> nesta fase — pizza de quinta já gasta 1. Cerveja conta como livre (máx 1x/semana).</div>
-    <div class="prep-item"><b>Água 2,5–3L/dia</b> — garrafa na mesa. Café liberado até 15h.</div>
-    <div class="prep-item"><b>2 quadradinhos de chocolate 70%</b> após o almoço não contam como livre. Sobremesa inteira conta.</div>
-    <div class="prep-item"><b>Estourou?</b> Registra sem culpa e o dia seguinte é normal — sem compensar.</div>
+    <h2>📋 Todos os blocos</h2>
+    ${BLOCOS.map((b, i) => {
+      const passado = hoje > pk(b.fim);
+      const peso = m.peso;
+      return `<div class="bloco-row ${i === iAtual ? 'atual' : ''} ${passado ? 'passado' : ''}">
+        <div class="bloco-cor" style="background:${COR_TIPO[b.tipo]}"></div>
+        <div style="flex:1; min-width:0">
+          <div class="bloco-nome">${b.nome} ${i === iAtual ? '<span class="tag-agora">agora</span>' : ''}</div>
+          <div class="bloco-per">${fmtPeriodo(b)}</div>
+        </div>
+        <div class="bloco-metas">
+          <div>${fmtN(b.kcalMin)}–${fmtN(b.kcalMax)} kcal</div>
+          <div class="g">${Math.round(b.protGkg*peso)}–${Math.round((b.protGkg+0.15)*peso)}g prot</div>
+        </div>
+      </div>`;
+    }).join('')}
+    <div class="hint" style="margin-top:10px">Proteína calculada sobre ${m.peso}kg. As faixas de caloria vêm do PLANO-ALIMENTAR.</div>
   </div>
 
   <div class="card">
-    <h2>🍳 Meal prep de domingo (~1h30 · 5 marmitas)</h2>
-    <div class="prep-item">1. <b>Forno (40min):</b> 2 assadeiras de legumes (brócolis, abobrinha, cenoura, cebola, batata) c/ azeite. Semana sim, semana não: assadeira de salmão/tilápia junto.</div>
-    <div class="prep-item">2. <b>Grill:</b> 1,2kg de filé de frango temperado, em lotes.</div>
-    <div class="prep-item">3. <b>Panela:</b> arroz da semana (ou as batatas do forno cobrem o carbo).</div>
-    <div class="prep-item">4. <b>Ovos:</b> cozinhar 6–8 pros lanches.</div>
-    <div class="prep-item">5. <b>Montar 5 marmitas:</b> 2 palmas proteína + 1,5 punho carbo + metade legumes. <b>2 na geladeira, 3 no freezer.</b></div>
-    <div class="prep-item">6. Frutas lavadas e visíveis na fruteira.</div>
-    <div class="prep-item" style="margin-top:6px">⚠️ <b>Acabou a marmita?</b> iFood com regra: prato grelhado + arroz + legumes. Marmitas do seu pai contam como prep.</div>
+    <h2>⚖️ A regra que vale mais que todas</h2>
+    <div class="prep-item">Estes números são <b>estimativas</b>. Quem decide é a <b>média semanal do peso</b>:</div>
+    <div class="prep-item">• Bloco de construção e o peso <b>não sobe</b> em 2 semanas → +1 punho de carbo no jantar.</div>
+    <div class="prep-item">• Bloco de construção e sobe <b>mais de 0,3 kg/semana</b> → está virando gordura, tira o carbo extra.</div>
+    <div class="prep-item">• Polimento caindo <b>mais de 0,5 kg/semana</b> → está perdendo músculo, sobe a caloria.</div>
+    <div class="prep-item" style="margin-top:8px">Proteína é o único número que <b>nunca</b> desce, em bloco nenhum.</div>
   </div>`;
+}
+
+// faixa colorida mostrando quais blocos cobrem o mês visível
+function faixaFases(y, m) {
+  const nDias = new Date(y, m + 1, 0).getDate();
+  const partes = [];
+  for (const b of BLOCOS) {
+    const ini = pk(b.ini), fim = pk(b.fim);
+    const d1 = new Date(Math.max(ini, new Date(y, m, 1)));
+    const d2 = new Date(Math.min(fim, new Date(y, m, nDias)));
+    if (d1 > d2) continue;
+    const dias = Math.round((d2 - d1) / 86400000) + 1;
+    partes.push({ b, dias });
+  }
+  if (!partes.length) return '<div class="cal-fase" style="flex:1; background:var(--card2); color:var(--muted)">fora da periodização</div>';
+  return partes.map(p =>
+    `<div class="cal-fase" style="flex:${p.dias}; background:${COR_TIPO[p.b.tipo]}" title="${p.b.nome}">${p.dias >= 5 ? p.b.nome : ''}</div>`
+  ).join('');
 }
 
 const CAL_FILTROS = [
@@ -720,6 +839,7 @@ function renderMes() {
       <button class="chip todos ${!calFiltro ? 'active' : ''}" data-filtro="">Todos</button>
       ${CAL_FILTROS.map(x => `<button class="chip ${calFiltro === x.id ? 'active' : ''}" data-filtro="${x.id}">${x.em} ${x.lbl}</button>`).join('')}
     </div>
+    <div class="cal-fases">${faixaFases(y, m)}</div>
     <div class="cal-grid">${cells}</div>
     ${ff ? `<div class="filtro-count">${ff.em} ${nMatch} dia(s) com ${ff.lbl.toLowerCase()} em ${MESES[m].toLowerCase()}</div>` : ''}
     <div class="legend">
@@ -735,6 +855,7 @@ function renderMes() {
 function renderGraficos() {
   const s = serieNutri(periodo === 0 ? null : periodo);
   const f = faseDe(new Date());
+  const mHoje = metasDoDia(hojeK());
   const trend = tendencia();
   const medias = s.length ? {
     kcal: s.reduce((x, y) => x + y.a.kcal, 0) / s.length,
@@ -764,13 +885,13 @@ function renderGraficos() {
   <div class="card">
     <h2>⚖️ Saldo calórico</h2>
     <canvas id="ch-saldo" style="height:170px"></canvas>
-    <div class="chart-note">Faixa verde = alvo da fase (${f.deficit ? '−600 a −100' : '−300 a +300'} kcal). Barra verde = dentro do alvo.</div>
+    <div class="chart-note">Azul = déficit, laranja = superávit. Atenção: o gasto do JSON é TMB + exercício e <b>não inclui o gasto do dia a dia</b>, então o déficit real é maior. Quem confirma é a balança.</div>
   </div>
 
   <div class="card">
     <h2>🥩 Proteína vs meta</h2>
     <canvas id="ch-prot" style="height:170px"></canvas>
-    <div class="chart-note">Faixa verde = meta de proteína do dia (vem do JSON).</div>
+    <div class="chart-note">Faixa verde = meta do bloco atual (${mHoje.protMin}–${mHoje.protMax}g). Pontos vermelhos = dia abaixo da meta.</div>
   </div>
 
   <div class="card">
@@ -899,8 +1020,6 @@ function drawSaldo(s) {
   const vals = s.map(x => x.a.saldo);
   const lim = Math.max(600, Math.max(...vals.map(Math.abs)) * 1.15);
   const yMin = -lim, yMax = lim;
-  const alvo = s[s.length - 1].a.alvo;
-  faixa(ctx, w, pad, h, yMin, yMax, alvo.min, alvo.max, 'rgba(62,207,142,0.10)');
   grade(ctx, w, h, pad, yMin, yMax);
   const Y = v => pad.t + (1 - (v - yMin) / (yMax - yMin)) * (h - pad.t - pad.b);
   const y0 = Y(0);
@@ -909,7 +1028,7 @@ function drawSaldo(s) {
   s.forEach((x, i) => {
     const bx = pad.l + i * bw + bw * 0.2;
     const y = Y(x.a.saldo);
-    ctx.fillStyle = x.a.saldoOK ? '#3ecf8e' : '#ff6b6b';
+    ctx.fillStyle = x.a.saldo < 0 ? '#4f8ef7' : '#ff9f43';
     ctx.fillRect(bx, Math.min(y, y0), Math.max(1, bw * 0.6), Math.abs(y - y0) || 1);
   });
   eixoX(ctx, w, h, pad, s.map(x => x.date));
@@ -1015,21 +1134,6 @@ function bind() {
   const dh = document.getElementById('d-hoje');
   if (dh) dh.onclick = () => { selDate = new Date(); render(); };
 
-  const pp = document.getElementById('p-prev');
-  if (pp) pp.onclick = () => { planDate.setDate(planDate.getDate() - 1); render(); };
-  const pn = document.getElementById('p-next');
-  if (pn) pn.onclick = () => { planDate.setDate(planDate.getDate() + 1); render(); };
-  const ph = document.getElementById('p-hoje');
-  if (ph) ph.onclick = () => { planDate = new Date(); render(); };
-  document.querySelectorAll('.carrossel').forEach(car => {
-    const dots = document.querySelector(`[data-dots="${car.dataset.car}"]`);
-    if (!dots) return;
-    const marca = idx => dots.querySelectorAll('.dot').forEach((d, j) => d.classList.toggle('on', j === idx));
-    car.addEventListener('scroll', () => marca(Math.round(car.scrollLeft / car.clientWidth)), { passive: true });
-    dots.querySelectorAll('.dot').forEach(d => d.onclick = () => {
-      car.scrollTo({ left: (+d.dataset.go) * car.clientWidth, behavior: 'smooth' });
-    });
-  });
 
   document.querySelectorAll('[data-filtro]').forEach(el => el.onclick = () => {
     calFiltro = el.dataset.filtro || null;
